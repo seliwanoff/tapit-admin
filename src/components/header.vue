@@ -10,7 +10,7 @@
           <div class="image-home">
             <router-link to="/" class="router">
               <img src="../assets/image/logo.png" alt="" />
-              <h3>TAPIT</h3>
+              <h2>TAPIT</h2>
             </router-link>
           </div>
 
@@ -38,7 +38,7 @@
               <div class="pic-nl" v-else>
                 {{ fn }}
               </div>
-              <span class="grtuser">Hello Admin</span>
+              <span class="grtuser">Hello {{ us }}</span>
             </div>
           </div>
         </div>
@@ -65,6 +65,7 @@ export default {
       url: "https://tap.150psi.com/public/storage/images/",
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
+      us: "",
     };
   },
   props: {
@@ -83,6 +84,9 @@ export default {
   },
   beforeMount() {},
   mounted() {
+    const data = JSON.parse(localStorage.getItem("admin"));
+    this.token = data.token;
+    this.us = data.data.username;
     window.addEventListener("resize", this.getDimensions);
     if (screen.width <= 600) {
       this.showDrop = false;
@@ -137,14 +141,15 @@ nav {
   display: none;
   padding: 10px;
 }
-.image-home img {
-  width: 36px;
-  float: left;
-}
+
 .image-home {
   width: 100%;
   animation: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1 fadein;
   vertical-align: middle;
+}
+.image-home img {
+  width: 36px;
+  float: left;
 }
 h3 {
   float: left;
@@ -242,5 +247,8 @@ i {
   text-align: center;
   align-content: center;
   align-self: center;
+}
+.router {
+  font-size: 25px;
 }
 </style>

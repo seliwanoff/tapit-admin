@@ -19,33 +19,39 @@
               <div class="ml-xf tcg-lf">
                 <label for="email"> MTN plug</label> <br />
                 <select v-model="mtn" class="inp-value">
-                  <option value="vtu">VTU</option>
-                  <option value="airtime">Airtime</option>
+                  <option value="vtu">HOSTED SIM</option>
+                  <option value="airtime">SME PLUG</option>
                 </select>
               </div>
               <div class="ml-xf tcg-lf">
                 <label for="email"> Airtel plug</label> <br />
                 <select v-model="airtel" class="inp-value">
-                  <option value="vtu">VTU</option>
-                  <option value="airtime">Airtime</option>
+                  <option value="vtu">HOSTED SIM</option>
+                  <option value="airtime">SME PLUG</option>
                 </select>
               </div>
 
               <div class="ml-xf tcg-lf">
                 <label for="email">9mobile plug</label> <br />
                 <select v-model="mobile" class="inp-value">
-                  <option value="vtu">VTU</option>
-                  <option value="airtime">Airtime</option>
+                  <option value="vtu">HOSTED SIM</option>
+                  <option value="airtime">SME PLUG</option>
                 </select>
               </div>
               <div class="ml-xf tcg-lf">
                 <label for="email">GLO plug</label> <br />
                 <select v-model="glo" class="inp-value">
-                  <option value="vtu">VTU</option>
-                  <option value="airtime">Airtime</option>
+                  <option value="vtu">HOSTED SIM</option>
+                  <option value="airtime">SME PLUG</option>
                 </select>
               </div>
-
+              <div class="ml-xf tcg-lf">
+                <label for="email">Switch Transaction</label> <br />
+                <select v-model="server" class="inp-value">
+                  <option value="1">Enabled</option>
+                  <option value="0">Disabled</option>
+                </select>
+              </div>
               <div class="ml-xf">
                 <button :disabled="isDisabled" style="margin-top: 10px !important">
                   {{ btnText }}
@@ -116,6 +122,7 @@ export default {
       image2: null,
       image3: null,
       btnUpload: "Save",
+      server: 1,
     };
   },
 
@@ -128,6 +135,7 @@ export default {
       const response = await axios.get(
         `${process.env.VUE_APP_BASE_URL}api/getmanagement`
       );
+
       this.ndata = response.data.data.ndata;
       this.mdata = response.data.data.mdata;
       this.nairtime = response.data.data.nairtime;
@@ -143,6 +151,7 @@ export default {
       this.airtel = response.data.data.airtel;
       this.mobile = response.data.data.mobile;
       this.glo = response.data.data.glo;
+      this.server = response.data.data.serverstatus;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
@@ -228,6 +237,7 @@ export default {
         airtel: this.airtel,
         glo: this.glo,
         mobile: this.mobile,
+        serverstatus: this.server,
       };
       try {
         const headers = {

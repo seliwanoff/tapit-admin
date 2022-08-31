@@ -3,8 +3,10 @@
     <aside v-show="hideme">
       <div class="side-main-bar">
         <ul>
-          <li class="width:100%;height:80px !important;border:1px solid black"></li>
-          <li class="width:100%;border:1px solid black;margin-top:40px">
+          <li
+            class="width:100%;border:1px solid black;margin-top:0px"
+            style="margin-top: 40px"
+          >
             <router-link
               to="/admin/dashboard"
               style="width: 100%; display: flex; justify-content: space-between"
@@ -63,6 +65,23 @@
                 </span>
 
                 Transfer</span
+              >
+
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/service/fund-deposit"
+              style="width: 100%; display: flex; justify-content: space-between"
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-bank icon-menu"></span>
+                </span>
+
+                Fund Deposit</span
               >
 
               <span class="fa fa-angle-right icon-menu"></span>
@@ -134,8 +153,24 @@
               <span class="fa fa-angle-right icon-menu"></span>
             </router-link>
           </li>
-          <li class="services">Account</li>
           <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/service/merchantupgrade"
+              style="width: 100%; display: flex; justify-content: space-between"
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-arrow-up icon-menu"></span>
+                </span>
+
+                Merchant Upgrade</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="services">Account</li>
+          <li class="width:100%;border:1px solid black" v-if="usertype == 3">
             <router-link
               to="/settings/admin-settings"
               style="
@@ -156,7 +191,7 @@
               <span class="fa fa-angle-right icon-menu"></span>
             </router-link>
           </li>
-          <li class="width:100%;border:1px solid black">
+          <li class="width:100%;border:1px solid black" v-if="usertype == 3">
             <router-link
               to="/settings/network"
               style="
@@ -173,6 +208,27 @@
                 </span>
 
                 Network Settings</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/settings/password"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                Update Password</span
               >
               <span class="fa fa-angle-right icon-menu"></span>
             </router-link>
@@ -220,7 +276,10 @@
             </router-link>
           </li>
 
-          <li class="width:100%;border:1px solid black">
+          <li
+            class="width:100%;border:1px solid black"
+            style="margin-bottom: 60px !important"
+          >
             <a
               href="javascript:void(0)"
               @click="logOut"
@@ -253,10 +312,15 @@ export default {
     return {
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
+      usertype: "",
     };
   },
 
   mounted() {
+    const data = JSON.parse(localStorage.getItem("admin"));
+    this.token = data.token;
+    this.usertype = data.data.type;
+
     window.addEventListener("resize", this.getDimensions);
   },
   unmounted() {
@@ -269,7 +333,7 @@ export default {
         const data = JSON.parse(localStorage.getItem("admin"));
 
         this.token = data.token;
-        console.log(this.token);
+
         await axios.get(`${process.env.VUE_APP_BASE_URL}api/logout`, {
           headers: {
             Authorization: "Bearer " + this.token,
@@ -316,14 +380,16 @@ ul {
   font-weight: 400;
   overflow-y: hidden;
   margin-top: 40px;
-  overflow: auto;
+  overflow: hidden;
+  height: 100%;
 }
 ul li {
   display: flex;
   justify-content: space-between;
-  height: 38px;
+  height: 30px;
   padding: 5px;
 }
+
 .menu-item {
   font-size: 0.9rem;
 }
@@ -395,5 +461,24 @@ li:hover {
     position: fixed;
     height: 100%;
   }
+}
+ul:hover {
+  overflow-y: scroll;
+  transition-delay: 0.2s;
+}
+ul::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+ul::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+ul::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
 }
 </style>

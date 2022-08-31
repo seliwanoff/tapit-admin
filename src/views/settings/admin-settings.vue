@@ -199,14 +199,11 @@
                     />
                   </div>
                   <div class="ml-xf tcg-lf">
-                    <label for="email"> MTN API</label> <br />
-                    <input
-                      type="number"
-                      class="inp-value"
-                      placeholder="Change MTN DATA plug"
-                      v-model="mtnapi"
-                      step="any"
-                    />
+                    <label for="email"> MTN Data API</label> <br />
+                    <select name="" id="" v-model="mtnapi">
+                      <option :value="1">SME PLUG</option>
+                      <option :value="2">CARDRI</option>
+                    </select>
                   </div>
 
                   <div class="ml-xf">
@@ -316,6 +313,7 @@ export default {
       image2: null,
       image3: null,
       btnUpload: "Save",
+      server: "",
     };
   },
 
@@ -343,6 +341,7 @@ export default {
       this.airtel = response.data.data.airtel;
       this.mobile = response.data.data.mobile;
       this.glo = response.data.data.glo;
+      this.server = response.data.data.serverstatus;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
@@ -428,6 +427,7 @@ export default {
         airtel: this.airtel,
         glo: this.glo,
         mobile: this.mobile,
+        serverstatus: this.server,
       };
       try {
         const headers = {

@@ -6,72 +6,128 @@ import Bill from '../views/services/bill.vue'
 import Transfer from '../views/services/transfer.vue'
 import Airtime from '../views/services/airtime.vue'
 import Data from '../views/services/data.vue'
+import UserbyID from '../views/services/userbyid.vue'
+
+import Deposit from '../views/services/fund-deposit.vue'
+import UserTransaction from '../views/services/userdetailtransaction.vue'
+
 import Settings from '../views/settings/admin-settings.vue'
+import UpdatePassword from '../views/settings/password.vue'
+import Verify from '../views/settings/verify.vue'
 import Broadcast from '../views/settings/broadcast.vue'
 import Refer from '../views/refer/refer.vue'
 import Refer_details from '../views/refer/refer_details.vue'
 import Network from '../views/settings/network.vue'
+import Reset from '../views/forget/reset.vue'
+
+import ResetPassword from '../views/forget/resetpassword.vue'
+import Merchant from '../views/services/merchantupgrade.vue'
 
 
 const routes = [{
         path: '/admin/dashboard',
-        name: 'TAPIT | Dashboard',
+        name: 'Tapit | Dashboard',
         component: Dashboard
     },
     {
         path: '/',
-        name: 'TAPIT | Admin Login',
+        name: 'Tapit | Admin Login',
         component: Login
     },
     {
         path: '/service/cable',
-        name: 'TAPIT | Cable Transaction',
+        name: 'Tapit | Cable Transaction',
         component: Cable
     },
     {
         path: '/service/bill',
-        name: 'TAPIT | Bill Transaction',
+        name: 'Tapit | Bill Transaction',
         component: Bill
     },
     {
         path: '/service/Transfer',
-        name: 'TAPIT | Transfer Transaction',
+        name: 'Tapit | Transfer Transaction',
         component: Transfer
     },
     {
         path: '/service/airtime',
-        name: 'TAPIT | Airtime Transaction',
+        name: 'Tapit | Airtime Transaction',
         component: Airtime
     },
     {
         path: '/service/data',
-        name: 'TAPIT | Data Transaction',
+        name: 'Tapit | Data Transaction',
         component: Data
     },
     {
+        path: '/service/fund-deposit',
+        name: 'Tapit | Fund Deposit',
+        component: Deposit 
+    },
+    {
         path: '/settings/admin-settings',
-        name: 'TAPIT | Admin Settings',
+        name: 'Tapit | Admin Settings',
         component: Settings
     },
     {
+        path: '/settings/password',
+        name: 'Tapit | Reset Password',
+        component: UpdatePassword
+    },
+    {
+        path: '/settings/verify',
+        name: 'Tapit | Verify',
+        component: Verify
+    },
+    {
         path: '/settings/broadcast',
-        name: 'TAPIT | Broadcast',
+        name: 'Tapit | Broadcast',
         component: Broadcast
     },
     {
         path: '/refer/refer',
-        name: 'TAPIT | Refer',
+        name: 'Tapit | Refer',
         component: Refer
     },
     {
         path: '/refer/refer_details/:username',
-        name: 'TAPIT | Refer_details',
+        name: 'Tapit | Refer_details',
         component: Refer_details
     },
     {
         path: '/settings/network',
-        name: 'TAPIT | Network',
+        name: 'Tapit | Network',
         component:Network
+    },
+     {
+        path: '/forget/reset',
+        name: 'Tapit | Forget Password',
+        component: Reset
+    },
+    {
+        path: '/forget/resetpassword',
+        name: 'Tapit | Reset Password',
+        component: ResetPassword
+    },
+    {
+        path: '/settings/password',
+        name: 'Tapit | Update Password',
+        component: UpdatePassword
+    },
+    {
+        path: '/service/merchantupgrade',
+        name: 'Tapit | Merchant',
+        component: Merchant
+    },
+    {
+        path: '/service/userbyid/:id',
+        name: 'Tapit | User Transaction',
+        component: UserbyID
+    },
+    {
+        path: '/userdetailtransaction/:id/:ref',
+        name: 'Tapit | User Transaction Details',
+        component: UserTransaction
     },
     
 

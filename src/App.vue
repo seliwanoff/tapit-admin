@@ -21,7 +21,7 @@ export default {
   },
   beforeCreate() {
     const data = JSON.parse(localStorage.getItem("admin"));
-    if (data != null && data.data.type == 3) {
+    if (data != null && (data.data.type == 3 || data.data.type == 4)) {
       console.log(data.data.type);
     } else {
       alert("You  are not authorized to proceed");

@@ -73,6 +73,11 @@
             </button>
           </div>
         </div>
+        <div class="ech-detail" style="margin-top: 10px">
+          <button class="btn-direct" @click="getEachUserTransaction(id)">
+            Get Transaction
+          </button>
+        </div>
       </div>
     </div>
     <header>
@@ -83,9 +88,9 @@
           </div>
 
           <div class="image-home">
-            <router-link to="/">
+            <router-link to="/" class="router">
               <img src="../../assets/image/logo.png" alt="" />
-              <h3>TAPIT</h3>
+              <h2 style="margin-left: -10px">TAPIT</h2>
             </router-link>
           </div>
 
@@ -113,7 +118,7 @@
               <div class="pic-nl" v-else>
                 {{ fn }}
               </div>
-              <span class="grtuser">Hello Admin</span>
+              <span class="grtuser">Hello {{ us }}</span>
             </div>
           </div>
         </div>
@@ -123,8 +128,10 @@
       <aside v-show="hidemethis">
         <div class="side-main-bar">
           <ul>
-            <li class="width:100%;height:80px !important;border:1px solid black"></li>
-            <li class="width:100%;border:1px solid black;margin-top:40px">
+            <li
+              class="width:100%;border:1px solid black;margin-top:40px"
+              style="margin-top: 30px"
+            >
               <router-link
                 to="/admin/dashboard"
                 style="width: 100%; display: flex; justify-content: space-between"
@@ -183,6 +190,23 @@
                   </span>
 
                   Transfer</span
+                >
+
+                <span class="fa fa-angle-right icon-menu"></span>
+              </router-link>
+            </li>
+            <li class="width:100%;border:1px solid black">
+              <router-link
+                to="/service/fund-deposit"
+                style="width: 100%; display: flex; justify-content: space-between"
+                active-class="bd-l"
+              >
+                <span class="menu-item">
+                  <span class="chl-ck">
+                    <span class="fa fa-bank icon-menu"></span>
+                  </span>
+
+                  Fund Deposit</span
                 >
 
                 <span class="fa fa-angle-right icon-menu"></span>
@@ -254,8 +278,24 @@
                 <span class="fa fa-angle-right icon-menu"></span>
               </router-link>
             </li>
-            <li class="services">Account</li>
             <li class="width:100%;border:1px solid black">
+              <router-link
+                to="/service/merchantupgrade"
+                style="width: 100%; display: flex; justify-content: space-between"
+                active-class="bd-l"
+              >
+                <span class="menu-item">
+                  <span class="chl-ck">
+                    <span class="fa fa-arrow-up icon-menu"></span>
+                  </span>
+
+                  Merchant Upgrade</span
+                >
+                <span class="fa fa-angle-right icon-menu"></span>
+              </router-link>
+            </li>
+            <li class="services">Account</li>
+            <li class="width:100%;border:1px solid black" v-if="usertype == 3">
               <router-link
                 to="/settings/admin-settings"
                 style="
@@ -276,7 +316,7 @@
                 <span class="fa fa-angle-right icon-menu"></span>
               </router-link>
             </li>
-            <li class="width:100%;border:1px solid black">
+            <li class="width:100%;border:1px solid black" v-if="usertype == 3">
               <router-link
                 to="/settings/network"
                 style="
@@ -293,6 +333,27 @@
                   </span>
 
                   Network Settings</span
+                >
+                <span class="fa fa-angle-right icon-menu"></span>
+              </router-link>
+            </li>
+            <li class="width:100%;border:1px solid black">
+              <router-link
+                to="/settings/password"
+                style="
+                  width: 100%;
+                  display: flex;
+                  justify-content: space-between;
+                  height: 100%;
+                "
+                active-class="bd-l"
+              >
+                <span class="menu-item">
+                  <span class="chl-ck">
+                    <span class="fa fa-cog icon-menu"></span>
+                  </span>
+
+                  Update Password</span
                 >
                 <span class="fa fa-angle-right icon-menu"></span>
               </router-link>
@@ -339,7 +400,10 @@
                 <span class="fa fa-angle-right icon-menu"></span>
               </router-link>
             </li>
-            <li class="width:100%;border:1px solid black">
+            <li
+              class="width:100%;border:1px solid black"
+              style="margin-bottom: 60px !important"
+            >
               <a
                 href="javascript:void(0)"
                 @click="logOut"
@@ -397,7 +461,7 @@
                   <th>Username</th>
                   <th>First Name</th>
                   <th>Last Name</th>
-                  <th>Email</th>
+
                   <th>Phone Number</th>
                   <th>Balance</th>
                   <th>Source</th>
@@ -407,10 +471,10 @@
               </thead>
               <tbody>
                 <tr v-for="item in allUsers" :key="item.id">
-                  <td>{{ item.username }}</td>
+                  <td style="max-width: 120px">{{ item.username }}</td>
                   <td>{{ item.fname }}</td>
                   <td>{{ item.lname }}</td>
-                  <td>{{ item.email }}</td>
+
                   <td>{{ item.phone }}</td>
                   <td>&#8358;{{ Intl.NumberFormat().format(item.balance) }}</td>
                   <td>{{ item.m }}</td>
@@ -428,22 +492,20 @@
               </tbody>
 
               <tfoot>
-                <tr>
-                  <button @click="prev" class="pg-btn" :disabled="pageNumber <= 1">
-                    prev
+                <button @click="prev" class="pg-btn" :disabled="pageNumber <= 1">
+                  prev
+                </button>
+                <span v-for="(item, index) in new Array(page)" :key="index">
+                  <button
+                    :class="['pg-btn', pageNumber == index + 1 ? 'active' : '']"
+                    @click="pageNumberget(index)"
+                  >
+                    {{ index + 1 }}
                   </button>
-                  <span v-for="(item, index) in new Array(page)" :key="index">
-                    <button
-                      :class="['pg-btn', pageNumber == index + 1 ? 'active' : '']"
-                      @click="pageNumberget(index)"
-                    >
-                      {{ index + 1 }}
-                    </button>
-                  </span>
-                  <button @click="next" class="pg-btn" :disabled="pageNumber >= page">
-                    next
-                  </button>
-                </tr>
+                </span>
+                <button @click="next" class="pg-btn" :disabled="pageNumber >= page">
+                  next
+                </button>
               </tfoot>
             </table>
             <div v-else style="width: 100%; text-align: center; font-weight: bold">
@@ -515,6 +577,8 @@ export default {
       m: "",
       nm: "",
       totalpages: 100,
+      usertype: "",
+      us: "",
     };
   },
   methods: {
@@ -570,7 +634,7 @@ export default {
           }
         );
 
-        this.allUsers = getUsers.data.data.data.reverse();
+        this.allUsers = getUsers.data.data.data;
       } catch (e) {
         console.log(e);
       }
@@ -594,7 +658,7 @@ export default {
           }
         );
 
-        this.allUsers = getUsers.data.data.data.reverse();
+        this.allUsers = getUsers.data.data.data;
       } catch (e) {
         console.log(e);
       }
@@ -612,13 +676,13 @@ export default {
         const getUsers = await axios.get(
           `${process.env.VUE_APP_BASE_URL}api/getusers?page=${this.pageNumber}`,
           {
-            Headers: {
+            headers: {
               Authorization: "Bearer " + this.token,
             },
           }
         );
 
-        this.allUsers = getUsers.data.data.data.reverse();
+        this.allUsers = getUsers.data.data.data;
       } catch (e) {
         console.log(e);
       }
@@ -694,6 +758,9 @@ export default {
         console.log(e);
       }
     },
+    getEachUserTransaction(id) {
+      this.$router.push(`/service/userbyid/${id}`);
+    },
   },
   async mounted() {
     // this.m = d.getMonth("MM");
@@ -737,7 +804,7 @@ export default {
           Authorization: "Bearer " + this.token,
         },
       });
-      this.allUsers = getUsers.data.data.data.reverse();
+      this.allUsers = getUsers.data.data.data;
       this.totalpage = getUsers.data.data.total;
 
       this.per_page = getUsers.data.data.per_page;
@@ -761,6 +828,10 @@ export default {
     } catch (e) {
       console.log(e);
     }
+    const datas = JSON.parse(localStorage.getItem("admin"));
+    this.token = datas.token;
+    this.usertype = datas.data.type;
+    this.us = data.data.username;
     this.isLoading = false;
   },
 };
@@ -822,6 +893,9 @@ main {
 @media screen and (max-width: 490px) {
   .rm-bl {
     margin-left: 12px;
+  }
+  .fa-bars {
+    margin-top: -20px;
   }
 }
 .ml-xf {
@@ -903,6 +977,7 @@ tbody tr td {
   text-align: center;
   padding: 0.35rem 0.9rem;
   border: 1px solid rgb(236, 230, 230);
+  max-width: 50px !important;
 }
 @media screen and (max-width: 499px) {
   .table-body thead tr th {
@@ -1003,12 +1078,7 @@ img {
     height: 30px;
   }
 }
-.router {
-  padding: 3px;
-  border-radius: 100%;
-  border: 1px solid #0a1aa8;
-  font-size: 0.8rem;
-}
+
 .pg-btn {
   padding: 2px;
   border-radius: 3px;
@@ -1070,7 +1140,7 @@ img {
   display: flex;
   justify-content: space-between;
   height: 30px;
-  border: 1px solid #ccc;
+
   align-items: center;
   margin-top: 5px;
 }
@@ -1244,5 +1314,20 @@ i {
   text-align: center;
   align-content: center;
   align-self: center;
+}
+.btn-direct {
+  background: #0a1aa8;
+  color: #fff;
+  border: 1px solid #0a1aa8;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+}
+.router {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 36px;
+  font-size: 20px !important;
 }
 </style>

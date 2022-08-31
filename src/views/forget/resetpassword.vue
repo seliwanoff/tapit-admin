@@ -4,35 +4,41 @@
 
     <div class="rg-c">
       <div class="gc-x">
-        <h2 class="hc-x">Admin Sign In</h2>
+        <h2 class="hc-x">Reset Password</h2>
         <main>
           <Message :status="status" :message="message" />
 
           <form @submit.prevent="handleSubmit">
             <div class="ml-xf">
-              <label for="email">Email or Username</label> <br />
+              <label for="email">Password</label> <br />
               <input
-                type="id"
+                type="password"
                 placeholder="Enter your Email or Username"
-                v-model="id"
+                v-model="password"
                 required
               />
             </div>
 
             <div class="ml-xf">
-              <label for="number">Password</label>
+              <label for="number"> ComfirmPassword</label>
               <input
                 type="password"
                 placeholder="********"
-                v-model="password"
+                v-model="cpassword"
+                required
+                autocomplete=""
+                @blur="confirmPaswword"
+              />
+            </div>
+            <div class="ml-xf">
+              <label for="number"> PIN (sent to your email or Phone Number</label>
+              <input
+                type="password"
+                placeholder="********"
+                v-model="pin"
                 required
                 autocomplete=""
               />
-              <span class="forget">
-                <router-link to="/forget/reset" style="color: #0a1aa8; font-size: 700"
-                  >Forget Password?</router-link
-                >
-              </span>
             </div>
             <div class="ml-xf">
               <button :disabled="isDisabled" style="margin-top: 10px !important">
@@ -54,46 +60,63 @@ export default {
   components: { Header2, Message },
   data() {
     return {
-      id: "",
+      cpassword: "",
+      pin: "",
       password: "",
       status: null,
       message: "",
-      btnText: "Sign In",
-      isDisabled: false,
+      btnText: "Reset",
+      isDisabled: true,
     };
   },
   methods: {
+    confirmPaswword() {
+      if (this.password == this.cpassword) {
+        this.isDisabled = false;
+      } else {
+        this.isDisabled = true;
+        this.status = false;
+        this.message = "Password doesnt match";
+        this.interval = setTimeout(() => {
+          this.status = null;
+        }, 3000);
+      }
+    },
     async handleSubmit() {
       this.btnText = "Loading";
       this.isDisabled = true;
+      const datas = JSON.parse(localStorage.getItem("pass"));
+      console.log(datas);
+
       const data = {
-        id: this.id,
+        code: this.pin,
         password: this.password,
+        phone: datas.phone,
       };
       try {
         const response = await axios.post(
-          `${process.env.VUE_APP_BASE_URL}api/auth/login`,
+          `${process.env.VUE_APP_BASE_URL}api/resetpasswordwithcode`,
           data
         );
-        if (response.data.data.type == 3 || response.data.data.type == 4) {
-          localStorage.setItem("admin", JSON.stringify(response.data));
-          this.status = true;
-          this.message = response.data.message;
+        this.p_status = response.data.data.p_status;
+
+        if (this.p_status == "true") {
+          (this.status = true), (this.message = response.data.message);
           this.interval = setTimeout(() => {
-            (this.status = null), this.$router.push("/admin/dashboard");
+            (this.status = null), this.$router.push("/");
           }, 3000);
-          console.log(response.data.type);
         } else {
-          alert("You  are not authorized to proceed");
-          localStorage.removeItem("admin");
-          this.$router.go();
+          (this.status = false), (this.message = response.data.message);
+          this.interval = setTimeout(() => {
+            this.status = null;
+          }, 3000);
         }
       } catch (e) {
         if (e.response.status == 400 || e.response.status == 422) {
           this.isDisabled = false;
           this.status = false;
           this.message = e.response.data.message;
-          this.btnText = "Sign In";
+          this.btnText = "Reset";
           this.isDisabled = false;
           this.interval = setTimeout(() => {
             this.status = null;
@@ -102,7 +125,7 @@ export default {
           this.status = false;
           this.message = "Connection problem, try checking your network";
           this.isDisabled = false;
-          this.btnText = "Sign In";
+          this.btnText = "Reset";
           this.interval = setTimeout(() => {
             this.status = null;
           }, 3000);

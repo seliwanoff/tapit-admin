@@ -11,7 +11,7 @@
 
     <div class="rg-c">
       <div :class="wideBody ? 'wideBody' : 'gc-x'">
-        <h2 class="hc-x">Transfer Transaction</h2>
+        <h2 class="hc-x">Fund Transaction</h2>
         <main>
           <div class="info-ipx-col">
             <div style="width: 100%">
@@ -76,7 +76,7 @@
                 <span>{{ totalpage }}</span>
               </div>
               <div class="cvlp">
-                <h3>{{ nm }} Total Transfer</h3>
+                <h3>{{ nm }} Total Fund Deposit</h3>
                 <br />
                 <span>&#8358;{{ Intl.NumberFormat().format(totalAmount) }}</span>
               </div>
@@ -89,29 +89,25 @@
                 <tr role="row">
                   <th>Transaction ID</th>
                   <th>Time</th>
-                  <th>Receiver</th>
-                  <th>Sender</th>
+                  <th>Users</th>
+                  <th>Methods</th>
                   <th>Bal Before</th>
                   <th>Bal After</th>
                   <th>Amount</th>
-                  <th>Source</th>
+
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="item in allUsers"
-                  :key="item.id"
-                  @click="getTransactionDetailUsers(item.user, item.ref)"
-                >
-                  <td>{{ item.ref }}</td>
+                <tr v-for="item in allUsers" :key="item.id">
+                  <td>{{ item.s.substring(0, 15) }}</td>
                   <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
-                  <td style="max-width: 120px">{{ item.plan }}</td>
-                  <td>{{ item.name }}</td>
+                  <td style="max-width: 120px">{{ item.reciever }}</td>
+                  <td>{{ item.ref }}</td>
                   <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
                   <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
                   <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
-                  <td>{{ item.m }}</td>
+
                   <td v-if="item.status == 1">Completed</td>
                   <td v-if="item.status == 0">Failed</td>
                 </tr>
@@ -219,7 +215,7 @@ export default {
       }
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -245,7 +241,7 @@ export default {
       console.log(this.day);
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&day=${this.day}&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&day=${this.day}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -272,7 +268,7 @@ export default {
       if (this.day) {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&day=${this.day}&month=${this.am}&year=${this.y}`,
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&day=${this.day}&month=${this.am}&year=${this.y}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -290,7 +286,7 @@ export default {
       } else {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6
             &month=${this.m + 1}&year=${this.y}`,
             {
               headers: {
@@ -331,14 +327,10 @@ export default {
           },
         });
 
-        if (this.m.toString().length == 2) {
-          this.am = this.m;
-        } else {
-          this.am = "0" + parseInt(this.m + 1);
-        }
+        console.log(this.pageNumber);
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -354,7 +346,7 @@ export default {
       } else {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -384,7 +376,7 @@ export default {
       }
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -413,7 +405,7 @@ export default {
       }
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&page=${this.pageNumber}&month=${this.m}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -425,9 +417,6 @@ export default {
       } catch (e) {
         console.log(e);
       }
-    },
-    async getTransactionDetailUsers(userid, ref) {
-      this.$router.push(`/userdetailtransaction/${userid}/${ref}`);
     },
   },
   async mounted() {
@@ -475,14 +464,13 @@ export default {
     }
     try {
       const getUsers = await axios.get(
-        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=4&month=${this.am}&year=${this.y}`,
+        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=6&month=${this.am}&year=${this.y}`,
         {
           headers: {
             Authorization: "Bearer " + this.token,
           },
         }
       );
-
       this.allUsers = getUsers.data.data.data;
       this.totalpage = getUsers.data.data.total;
       this.per_page = getUsers.data.data.per_page;
@@ -635,7 +623,7 @@ tbody tr td {
   padding: 0.35rem 0.9rem;
   border: 1px solid rgb(236, 230, 230);
   cursor: pointer;
-  max-width: 70px !important;
+  max-width: 80px !important;
 }
 @media screen and (max-width: 499px) {
   .table-body thead tr th {

@@ -4,40 +4,18 @@
 
     <div class="rg-c">
       <div class="gc-x">
-        <h2 class="hc-x">Admin Sign In</h2>
+        <h2 class="hc-x">Forget Password</h2>
         <main>
           <Message :status="status" :message="message" />
 
           <form @submit.prevent="handleSubmit">
             <div class="ml-xf">
               <label for="email">Email or Username</label> <br />
-              <input
-                type="id"
-                placeholder="Enter your Email or Username"
-                v-model="id"
-                required
-              />
+              <input type="id" placeholder="Enter your Email Or Username" v-model="id" />
             </div>
 
             <div class="ml-xf">
-              <label for="number">Password</label>
-              <input
-                type="password"
-                placeholder="********"
-                v-model="password"
-                required
-                autocomplete=""
-              />
-              <span class="forget">
-                <router-link to="/forget/reset" style="color: #0a1aa8; font-size: 700"
-                  >Forget Password?</router-link
-                >
-              </span>
-            </div>
-            <div class="ml-xf">
-              <button :disabled="isDisabled" style="margin-top: 10px !important">
-                {{ btnText }}
-              </button>
+              <button :disabled="isDisabled">{{ btnText }}</button>
             </div>
           </form>
         </main>
@@ -54,55 +32,50 @@ export default {
   components: { Header2, Message },
   data() {
     return {
-      id: "",
-      password: "",
+      code: "",
       status: null,
       message: "",
-      btnText: "Sign In",
+      btnText: "Send Code",
       isDisabled: false,
+      id: "",
     };
   },
   methods: {
     async handleSubmit() {
       this.btnText = "Loading";
       this.isDisabled = true;
+
       const data = {
         id: this.id,
-        password: this.password,
       };
       try {
         const response = await axios.post(
-          `${process.env.VUE_APP_BASE_URL}api/auth/login`,
+          `${process.env.VUE_APP_BASE_URL}api/sendresetcode`,
           data
         );
-        if (response.data.data.type == 3 || response.data.data.type == 4) {
-          localStorage.setItem("admin", JSON.stringify(response.data));
-          this.status = true;
-          this.message = response.data.message;
-          this.interval = setTimeout(() => {
-            (this.status = null), this.$router.push("/admin/dashboard");
-          }, 3000);
-          console.log(response.data.type);
-        } else {
-          alert("You  are not authorized to proceed");
-          localStorage.removeItem("admin");
-          this.$router.go();
-        }
+        localStorage.setItem("pass", JSON.stringify(response.data.message));
+        (this.status = true),
+          (this.message = "Reset code has been sent to your Email or Registerd Number");
+        this.interval = setTimeout(() => {
+          (this.status = null), this.$router.push("/forget/resetpassword");
+        }, 3000);
       } catch (e) {
-        if (e.response.status == 400 || e.response.status == 422) {
+        console.log(e);
+        if (
+          e.response.status == 400 ||
+          e.response.status == 422 ||
+          e.response.status == 401
+        ) {
           this.isDisabled = false;
           this.status = false;
           this.message = e.response.data.message;
-          this.btnText = "Sign In";
-          this.isDisabled = false;
+          this.btnText = "Send Code";
           this.interval = setTimeout(() => {
             this.status = null;
           }, 3000);
         } else {
           this.status = false;
           this.message = "Connection problem, try checking your network";
-          this.isDisabled = false;
-          this.btnText = "Sign In";
           this.interval = setTimeout(() => {
             this.status = null;
           }, 3000);
@@ -130,9 +103,8 @@ export default {
 }
 @media screen and (max-width: 490px) {
   .rg-c .gc-x {
-    margin-top: 60px;
     width: 100%;
-
+    margin: 0px;
     box-sizing: border-box;
     border-radius: 20px;
     margin-top: 100px;
@@ -152,8 +124,6 @@ main {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
 }
 .rm-bl {
   margin-left: 5px;
@@ -213,21 +183,9 @@ input::-webkit-input-placeholder {
 .ml-xf {
   width: 100%;
   padding: 10px;
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
 }
 .xdir,
 .vdir {
   font-size: 0.9rem;
-}
-.forget {
-  font-size: 0.9rem;
-  width: 100%;
-  text-align: right !important;
-  color: #0a1aa8 !important;
-
-  font-weight: 800;
-  float: right;
-  margin: 10px;
 }
 </style>

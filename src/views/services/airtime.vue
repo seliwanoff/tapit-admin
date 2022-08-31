@@ -94,8 +94,10 @@
                     <tr role="row">
                       <th>Transaction ID</th>
                       <th>Time</th>
-                      <th>User</th>
+                      <th>Receiver</th>
                       <th>Network</th>
+                      <th>Bal Before</th>
+                      <th>Bal After</th>
                       <th>Amount</th>
                       <th>Source</th>
                       <th>Status</th>
@@ -103,7 +105,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item in airtimeTransaction" :key="item.id">
+                    <tr
+                      v-for="item in airtimeTransaction"
+                      :key="item.id"
+                      @click="getTransactionDetailUsers(item.user, item.ref)"
+                    >
                       <td>{{ item.ref }}</td>
                       <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
                       <td>{{ item.reciever }}</td>
@@ -138,7 +144,8 @@
                       <td v-else-if="item.network == 4 && item.name == 'succesfull'">
                         GLO
                       </td>
-
+                      <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
+                      <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
                       <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
                       <td>{{ item.m }}</td>
                       <td v-if="item.status == 1">Completed</td>
@@ -332,7 +339,7 @@ export default {
             },
           }
         );
-        this.airtimeTransaction = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
         this.totalpage = getUsers.data.data.total;
         this.per_page = getUsers.data.data.per_page;
         this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
@@ -368,7 +375,7 @@ export default {
           }
         );
 
-        this.airtimeTransaction = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
 
         this.totalpage = getUsers.data.data.total;
         this.per_page = getUsers.data.data.per_page;
@@ -395,7 +402,7 @@ export default {
               },
             }
           );
-          this.airtimeTransaction = getUsers.data.data.data.reverse();
+          this.airtimeTransaction = getUsers.data.data.data;
           this.totalpage = getUsers.data.data.total;
           this.per_page = getUsers.data.data.per_page;
           this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
@@ -414,7 +421,7 @@ export default {
               },
             }
           );
-          this.airtimeTransaction = getUsers.data.data.data.reverse();
+          this.airtimeTransaction = getUsers.data.data.data;
           this.totalpage = getUsers.data.data.total;
           this.per_page = getUsers.data.data.per_page;
           this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
@@ -451,17 +458,18 @@ export default {
 
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&day=${this.day}&month=${this.am}&year=${this.y}page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
               },
             }
           );
-          this.allUsers = getUsers.data.data.data.reverse();
+          this.airtimeTransaction = getUsers.data.data.data;
+          console.log(this.airtimeTransaction);
           this.totalpage = getUsers.data.data.total;
-          this.per_page = getUsers.data.data.per_page;
-          this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
+          //this.per_page = getUsers.data.data.per_page;
+          //this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
           console.log(e);
@@ -476,11 +484,10 @@ export default {
               },
             }
           );
-          this.allUsers = getUsers.data.data.data.reverse();
+          this.airtimeTransaction = getUsers.data.data.data;
           this.totalpage = getUsers.data.data.total;
-          this.per_page = getUsers.data.data.per_page;
-          this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
-
+          //this.per_page = getUsers.data.data.per_page;
+          //this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
           console.log(e);
@@ -495,10 +502,15 @@ export default {
         },
       });
       this.pageNumber = this.pageNumber - 1;
+      if (this.m.toString().length == 2) {
+        this.am = this.m;
+      } else {
+        this.am = "0" + parseInt(this.m + 1);
+      }
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&day=${this.day}&month=${this.m}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -506,7 +518,8 @@ export default {
           }
         );
 
-        this.allUsers = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
+        this.totalAmount = getUsers.data.total;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         console.log(e);
@@ -520,17 +533,23 @@ export default {
         },
       });
       this.pageNumber = this.pageNumber + 1;
+      if (this.m.toString().length == 2) {
+        this.am = this.m;
+      } else {
+        this.am = "0" + parseInt(this.m + 1);
+      }
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&day=${this.day}&month=${this.m}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
             },
           }
         );
-        this.allUsers = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
+        this.totalAmount = getUsers.data.total;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         console.log(e);
@@ -556,7 +575,7 @@ export default {
           }
         );
 
-        this.airtimeTransaction = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
       } catch (e) {
         console.log(e);
       }
@@ -579,7 +598,7 @@ export default {
             },
           }
         );
-        this.airtimeTransaction = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         console.log(e);
@@ -603,11 +622,14 @@ export default {
             },
           }
         );
-        this.airtimeTransaction = getUsers.data.data.data.reverse();
+        this.airtimeTransaction = getUsers.data.data.data;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         console.log(e);
       }
+    },
+    async getTransactionDetailUsers(userid, ref) {
+      this.$router.push(`/userdetailtransaction/${userid}/${ref}`);
     },
   },
   async mounted() {
@@ -661,7 +683,8 @@ export default {
           },
         }
       );
-      this.airtimeTransaction = getUsers.data.data.data.reverse();
+      console.log(getUsers);
+      this.airtimeTransaction = getUsers.data.data.data;
       this.totalpage = getUsers.data.data.total;
       this.per_page = getUsers.data.data.per_page;
       this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
@@ -678,7 +701,7 @@ export default {
           },
         }
       );
-      this.airtimeSchedule = getUsers.data.data.data.reverse();
+      this.airtimeSchedule = getUsers.data.data.data;
       this.totalpages = getUsers.data.data.total;
       this.per_pages = getUsers.data.data.per_page;
       this.pages = Math.ceil(parseInt(this.totalpages / this.per_pages) + 1);
@@ -827,6 +850,8 @@ tbody tr td {
   text-align: center;
   padding: 0.35rem 0.9rem;
   border: 1px solid rgb(236, 230, 230);
+  cursor: pointer;
+  max-width: 50px !important;
 }
 @media screen and (max-width: 499px) {
   .table-body thead tr th {
