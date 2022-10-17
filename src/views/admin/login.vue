@@ -110,6 +110,12 @@ export default {
       }
     },
   },
+  mounted() {
+    const data = JSON.parse(localStorage.getItem("admin"));
+    if (data != null) {
+      this.$router.push("/admin/dashboard");
+    }
+  },
 };
 </script>
 <style scoped>

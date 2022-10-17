@@ -123,6 +123,9 @@ export default {
       image3: null,
       btnUpload: "Save",
       server: 1,
+      ncbill: 0,
+      ncdata: 0,
+      ncaitime: 0,
     };
   },
 
@@ -152,22 +155,32 @@ export default {
       this.mobile = response.data.data.mobile;
       this.glo = response.data.data.glo;
       this.server = response.data.data.serverstatus;
+      this.ncdata = response.data.data.ncdata;
+      this.naitime = response.data.data.naitime;
+      this.ncbill = response.data.data.ncbill;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
     const headers = {
       "Content-Type": "application/json",
       Authorization: "Bearer " + this.token,
     };
+
     try {
       const response = await axios.get(`${process.env.VUE_APP_BASE_URL}api/getmtnplans`, {
         headers: headers,
       });
       this.plans = response.data.data;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
   },
   methods: {
@@ -238,12 +251,16 @@ export default {
         glo: this.glo,
         mobile: this.mobile,
         serverstatus: this.server,
+        ncdata: this.ncdata,
+        ncaitime: this.ncaitime,
+        ncbill: this.ncbill,
       };
       try {
         const headers = {
           "Content-Type": "application/json",
           Authorization: "Bearer " + this.token,
         };
+        console.log(headers);
         const response = await axios.post(
           `${process.env.VUE_APP_BASE_URL}api/setapp`,
           data,

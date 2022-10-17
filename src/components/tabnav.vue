@@ -40,6 +40,7 @@ ul li {
   border-radius: 10px;
   cursor: pointer;
   font-size: 0.8rem;
+  height: 40px;
 }
 li:hover {
   background: none !important;

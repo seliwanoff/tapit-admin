@@ -11,7 +11,7 @@
 
     <div class="rg-c">
       <div :class="wideBody ? 'wideBody' : 'gc-x'">
-        <h2 class="hc-x">Airtime Transaction</h2>
+        <h2 class="hc-x">Transaction</h2>
         <TabNav
           :tabs="['Transaction', 'Schedule']"
           :selected="selected"
@@ -23,7 +23,7 @@
                 <div style="width: 100%">
                   <label for="search">
                     From:
-                    <select name="" id="" v-model="day" @click="getDaysValue(day)">
+                    <select name="" id="" v-model="dayfrom" @change="getDaysValue()">
                       <option value="01">01</option>
                       <option value="02">02</option>
                       <option value="03">03</option>
@@ -59,7 +59,7 @@
                   </label>
                   <label for="search">
                     To:
-                    <select name="" id="" v-model="day" @click="getDaysValue(day)">
+                    <select name="" id="" v-model="dayto" @change="getDaysValue()">
                       <option value="01">01</option>
                       <option value="02">02</option>
                       <option value="03">03</option>
@@ -104,7 +104,7 @@
                   </label>
                   <label for="search">
                     Years:
-                    <select v-model="y" @click="getYearTransact(y)">
+                    <select v-model="y" @change="getYearTransact(y)">
                       <option :value="item" v-for="item in ys" :key="item.index">
                         {{ item }}
                       </option>
@@ -123,6 +123,9 @@
                     <span>&#8358;{{ Intl.NumberFormat().format(totalAmount) }}</span>
                   </div>
                 </div>
+              </div>
+              <div style="max-width: 300px; width: 100%; margin: 0px auto">
+                <canvas id="myChart" width="50" height="50"></canvas>
               </div>
               <div class="info-ipx-col">
                 <label for="search">
@@ -163,7 +166,7 @@
                       :key="item.id"
                       @click="getTransactionDetailUsers(item.user, item.ref)"
                     >
-                      <td>{{ item.ref }}</td>
+                      <td style="width: 110px">{{ item.ref }}</td>
                       <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
                       <td>{{ item.reciever }}</td>
 
@@ -204,12 +207,12 @@
                       <td v-if="item.status == 1">Completed</td>
                       <td v-if="item.status == 0">Failed</td>
                       <!---
-                      <td>
-                        <button @click="getEachUserDetails" class="btn-details">
-                          Details
-                        </button>
-                      </td>
-                      -->
+                        <td>
+                          <button @click="getEachUserDetails" class="btn-details">
+                            Details
+                          </button>
+                        </td>
+                        -->
                     </tr>
                   </tbody>
                   <tfoot>
@@ -265,16 +268,16 @@
                       <td v-if="item.status == 1">Completed</td>
                       <td v-if="item.status == 0">Failed</td>
                       <!--<td>
-                        <button @click="getEachUserDetails" class="btn-details">
-                          Details
-                        </button>
-
-                      </td>
-                      -->
+                          <button @click="getEachUserDetails" class="btn-details">
+                            Details
+                          </button>
+  
+                        </td>
+                        -->
                     </tr>
                   </tbody>
-                  <tfoot>
-                    <tr>
+                  <tfoot style="width: 100% !important; border: 1px solid black">
+                    <tr style="display: flex !important; width: 100%">
                       <button @click="prevs" class="pg-btn" :disabled="pageNumber <= 1">
                         prev
                       </button>
@@ -316,6 +319,8 @@ import TabNav from "@/components/tabnav.vue";
 import Tab from "@/components/tab.vue";
 import moment from "moment";
 import jsPDF from "jspdf";
+import Chart from "chart.js/auto";
+
 import html2canvas from "html2canvas";
 import * as XLSX from "xlsx/xlsx.mjs";
 
@@ -358,7 +363,8 @@ export default {
       am: "",
       y: "",
       nm: "",
-      day: "",
+      dayto: "",
+      dayfrom: "",
       daysInMonth: "",
       index: 0,
       totalAmount: 0,
@@ -376,6 +382,10 @@ export default {
         "November",
         "December",
       ],
+      airtime: "",
+      bill: "",
+      data: "",
+      cable: "",
     };
   },
   methods: {
@@ -405,7 +415,7 @@ export default {
       }
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?monthfrom=${this.am}&monthto=${this.am}&yearfrom=${this.y}&yearto=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -434,23 +444,27 @@ export default {
         }
       }
     },
-    async getDaysValue(day) {
+    async getDaysValue() {
       if (this.m.toString().length == 2) {
         this.am = this.m;
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
-      this.day = day;
+      const data = {
+        dayto: this.dayto,
+        dayfrom: this.dayfrom,
+      };
+      console.log(data);
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&day=${this.day}&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?monthfrom=${this.am}&monthto=${this.am}&yearfrom=${this.y}&yearto=${this.y}&dayfrom=${data.dayfrom}&dayto=${data.dayto}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
             },
           }
         );
-
+        console.log(getUsers);
         this.airtimeTransaction = getUsers.data.data.data;
 
         this.totalpage = getUsers.data.data.total;
@@ -474,7 +488,7 @@ export default {
       if (this.day) {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&day=${this.day}&month=${this.am}&year=${this.y}`,
+            `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?monthfrom=${this.am}&monthto=${this.am}&yearfrom=${this.y}&yearto=${this.y}&dayfrom=${this.dayfrom}&dayto=${this.dayto}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -495,8 +509,8 @@ export default {
       } else {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1
-            &month=${this.m + 1}&year=${this.y}`,
+            `${process.env.VUE_APP_BASE_URL}api/getdatetransaction
+              &month=${this.m + 1}&year=${this.y}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -543,7 +557,7 @@ export default {
 
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -565,7 +579,7 @@ export default {
       } else {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?month=${this.am}&year=${this.y}page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
@@ -601,7 +615,7 @@ export default {
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -635,7 +649,7 @@ export default {
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
+          `${process.env.VUE_APP_BASE_URL}api/getdatetransaction?page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -664,7 +678,7 @@ export default {
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/getallschedule?type=1&page=${this.pageNumber}`,
+          `${process.env.VUE_APP_BASE_URL}api/getallschedule?page=${this.pageNumber}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -691,7 +705,7 @@ export default {
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/getallschedule?type=1&page=${this.pageNumber}`,
+          `${process.env.VUE_APP_BASE_URL}api/getallschedule?page=${this.pageNumber}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -718,7 +732,7 @@ export default {
 
       try {
         const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/getallschedule?type=1&page=${this.pageNumber}`,
+          `${process.env.VUE_APP_BASE_URL}api/getallschedule?page=${this.pageNumber}`,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -742,7 +756,8 @@ export default {
     const d = new Date();
     this.m = d.getMonth("MM");
     this.y = d.getFullYear("yyyy");
-    this.day = String(d.getDate()).padStart(2, 0);
+    this.dayto = String(d.getDate()).padStart(2, 0);
+    this.dayfrom = String(d.getDate()).padStart(2, 0);
 
     this.myear = `${this.m}-${this.y}`;
 
@@ -782,7 +797,7 @@ export default {
 
     try {
       const getUsers = await axios.get(
-        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}`,
+        `${process.env.VUE_APP_BASE_URL}api/getdatetransaction`,
         {
           headers: {
             Authorization: "Bearer " + this.token,
@@ -802,7 +817,7 @@ export default {
     }
     try {
       const getUsers = await axios.get(
-        `${process.env.VUE_APP_BASE_URL}api/getallschedule?type=1`,
+        `${process.env.VUE_APP_BASE_URL}api/getallschedule?`,
         {
           headers: {
             Authorization: "Bearer " + this.token,
@@ -819,6 +834,116 @@ export default {
         localStorage.removeItem("admin");
       }
     }
+
+    try {
+      const getdatetransaction = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=1&month=${this.am}&year=${this.y}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+
+      this.airtime = parseInt(getdatetransaction.data.data.total);
+    } catch (e) {
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
+    }
+    try {
+      const getdatetransaction = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&month=${this.am}&year=${this.y}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+
+      this.data = parseInt(getdatetransaction.data.data.total);
+    } catch (e) {
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
+    }
+    try {
+      const getdatetransaction = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=3&month=${this.am}&year=${this.y}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+
+      this.cable = parseInt(getdatetransaction.data.data.total);
+    } catch (e) {
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
+    }
+    try {
+      const getdatetransaction = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=5&month=${this.am}&year=${this.y}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+
+      this.bill = parseInt(getdatetransaction.data.data.total);
+      console.log(this.bill);
+    } catch (e) {
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
+    }
+    const ctx = document.getElementById("myChart");
+    const myChart = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: ["Airtime", "Data", "Bill", "Cable"],
+        datasets: [
+          {
+            label: "Scales of transaction",
+            data: [this.airtime, this.data, this.bill, this.cable],
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: null,
+            display: false,
+          },
+        },
+      },
+    });
+
+    myChart;
     this.isLoading = false;
   },
 };

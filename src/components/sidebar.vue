@@ -23,6 +23,23 @@
               <span class="fa fa-angle-right icon-menu"></span>
             </router-link>
           </li>
+          <li class="width:100%;border:1px solid black;margin-top:0px">
+            <router-link
+              to="/admin/transaction"
+              style="width: 100%; display: flex; justify-content: space-between"
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-bars icon-menu"></span>
+                </span>
+
+                Transaction
+              </span>
+
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
           <!--  <li class="width:100%;border:1px solid black">
                 <router-link to="/user/transaction" style="width:100%;display:flex;justify-content:space-between"  active-class="bd-l">
                  <span class="menu-item">
@@ -275,7 +292,176 @@
               <span class="fa fa-angle-right icon-menu"></span>
             </router-link>
           </li>
+          <li class="services">Plan settings</li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/plan/mtn"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
 
+                MTN</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/plan/Airtel"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                Airtel</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/plan/mobile"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                9Mobile</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/plan/glo"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-bell icon-menu"></span>
+                </span>
+
+                GLO</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="services">TV settings</li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/tv/dstv"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                DSTV</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/tv/gotv"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                GOTV</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/tv/startimes"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-cog icon-menu"></span>
+                </span>
+
+                STARTIMES</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
+          <li class="width:100%;border:1px solid black">
+            <router-link
+              to="/tv/showmax"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 100%;
+              "
+              active-class="bd-l"
+            >
+              <span class="menu-item">
+                <span class="chl-ck">
+                  <span class="fa fa-bell icon-menu"></span>
+                </span>
+
+                SHOWMAX</span
+              >
+              <span class="fa fa-angle-right icon-menu"></span>
+            </router-link>
+          </li>
           <li
             class="width:100%;border:1px solid black"
             style="margin-bottom: 60px !important"
@@ -339,7 +525,7 @@ export default {
             Authorization: "Bearer " + this.token,
           },
         });
-
+        localStorage.removeItem("admin");
         this.$router.push("/");
       } catch (e) {
         console.log(e);
@@ -365,6 +551,7 @@ aside {
   height: 100%;
   position: fixed;
   top: 50;
+  left: 0;
 }
 
 .side-main-bar {
@@ -378,9 +565,9 @@ ul {
   letter-spacing: 0.2px;
   font-family: "Quicksand", Georgia, "Times New Roman", Times, serif;
   font-weight: 400;
-  overflow-y: hidden;
+
   margin-top: 40px;
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
 }
 ul li {
@@ -462,10 +649,7 @@ li:hover {
     height: 100%;
   }
 }
-ul:hover {
-  overflow-y: scroll;
-  transition-delay: 0.2s;
-}
+
 ul::-webkit-scrollbar {
   width: 3px;
 }

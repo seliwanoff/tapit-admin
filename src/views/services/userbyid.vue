@@ -234,7 +234,10 @@ export default {
         this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
         this.totalAmount = getUsers.data.total;
       } catch (e) {
-        console.log(e);
+        if (e.response.status === 401) {
+          this.$router.push("/");
+          localStorage.removeItem("admin");
+        }
       }
     },
     async getDaysValue(day) {
@@ -261,7 +264,10 @@ export default {
         this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
         this.totalAmount = getUsers.data.total;
       } catch (e) {
-        console.log(e);
+        if (e.response.status === 401) {
+          this.$router.push("/");
+          localStorage.removeItem("admin");
+        }
       }
     },
     async getYearTransact(year) {
@@ -287,7 +293,10 @@ export default {
           this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
-          console.log(e);
+          if (e.response.status === 401) {
+            this.$router.push("/");
+            localStorage.removeItem("admin");
+          }
         }
       } else {
         try {
@@ -306,7 +315,10 @@ export default {
           this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
-          console.log(e);
+          if (e.response.status === 401) {
+            this.$router.push("/");
+            localStorage.removeItem("admin");
+          }
         }
       }
     },
@@ -347,7 +359,10 @@ export default {
           // this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
-          console.log(e);
+          if (e.response.status === 401) {
+            this.$router.push("/");
+            localStorage.removeItem("admin");
+          }
         }
       } else {
         try {
@@ -366,7 +381,10 @@ export default {
 
           this.totalAmount = getUsers.data.total;
         } catch (e) {
-          console.log(e);
+          if (e.response.status === 401) {
+            this.$router.push("/");
+            localStorage.removeItem("admin");
+          }
         }
       }
     },
@@ -396,7 +414,10 @@ export default {
         this.allUsers = getUsers.data.data.data;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
-        console.log(e);
+        if (e.response.status === 401) {
+          this.$router.push("/");
+          localStorage.removeItem("admin");
+        }
       }
     },
     async next() {
@@ -424,7 +445,10 @@ export default {
         this.allUsers = getUsers.data.data.data;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
-        console.log(e);
+        if (e.response.status === 401) {
+          this.$router.push("/");
+          localStorage.removeItem("admin");
+        }
       }
     },
   },
@@ -485,7 +509,10 @@ export default {
       this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
       this.totalAmount = getUsers.data.total;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
     this.isLoading = false;
   },

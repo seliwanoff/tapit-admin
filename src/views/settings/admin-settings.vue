@@ -169,7 +169,13 @@
                     />
                   </div>
                   <div class="ml-xf tcg-lf">
-                    <label for="email"> Bill Commission</label> <br />
+                    <label for="email"
+                      >Merchant Bill Commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ cbill }} per 1 buy )</small
+                      ></label
+                    >
+                    <br />
                     <input
                       type="number"
                       class="inp-value"
@@ -179,7 +185,29 @@
                     />
                   </div>
                   <div class="ml-xf tcg-lf">
-                    <label for="email"> Data commission</label> <br />
+                    <label for="email"
+                      >Normal Bill Commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ ncbill }} per 1 buy )</small
+                      ></label
+                    >
+                    <br />
+                    <input
+                      type="number"
+                      class="inp-value"
+                      placeholder="Change Bill commission"
+                      v-model="ncbill"
+                      step="any"
+                    />
+                  </div>
+                  <div class="ml-xf tcg-lf">
+                    <label for="email">
+                      Merchant Data commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ cdata }}of amount bought )</small
+                      >
+                    </label>
+                    <br />
                     <input
                       type="number"
                       class="inp-value"
@@ -189,7 +217,13 @@
                     />
                   </div>
                   <div class="ml-xf tcg-lf">
-                    <label for="email">Airtime commission</label> <br />
+                    <label for="email">
+                      Merchant Airtime commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ caitime }} of amount bought )</small
+                      >
+                    </label>
+                    <br />
                     <input
                       type="number"
                       class="inp-value"
@@ -199,10 +233,42 @@
                     />
                   </div>
                   <div class="ml-xf tcg-lf">
+                    <label for="email">
+                      Normal Data commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ ncdata }}of amount bought )</small
+                      ></label
+                    >
+                    <br />
+                    <input
+                      type="number"
+                      class="inp-value"
+                      placeholder="Change Data commission"
+                      v-model="ncdata"
+                      step="any"
+                    />
+                  </div>
+                  <div class="ml-xf tcg-lf">
+                    <label for="email">
+                      Normal Airtime commission
+                      <small style="color: red; font-size: 0.8rem"
+                        >({{ ncaitime }} of amount bought )</small
+                      >
+                    </label>
+                    <br />
+                    <input
+                      type="number"
+                      class="inp-value"
+                      placeholder="Change Airtime commission"
+                      v-model="ncaitime"
+                      step="any"
+                    />
+                  </div>
+                  <div class="ml-xf tcg-lf">
                     <label for="email"> MTN Data API</label> <br />
                     <select name="" id="" v-model="mtnapi">
-                      <option :value="1">SME PLUG</option>
-                      <option :value="2">CARDRI</option>
+                      <option :value="2">SME PLUG</option>
+                      <option :value="1">CARDRI</option>
                     </select>
                   </div>
 
@@ -314,6 +380,9 @@ export default {
       image3: null,
       btnUpload: "Save",
       server: "",
+      ncaitime: "",
+      ncdata: "",
+      ncbill: "",
     };
   },
 
@@ -342,10 +411,16 @@ export default {
       this.mobile = response.data.data.mobile;
       this.glo = response.data.data.glo;
       this.server = response.data.data.serverstatus;
+      this.ncaitime = response.data.data.ncaitime;
+      this.ncdata = response.data.data.ncdata;
+      this.ncbill = response.data.data.ncbill;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
     const headers = {
       "Content-Type": "application/json",
@@ -357,7 +432,10 @@ export default {
       });
       this.plans = response.data.data;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
   },
   methods: {
@@ -428,6 +506,9 @@ export default {
         glo: this.glo,
         mobile: this.mobile,
         serverstatus: this.server,
+        ncaitime: this.ncaitime,
+        ncdata: this.ncdata,
+        ncbill: this.ncbill,
       };
       try {
         const headers = {

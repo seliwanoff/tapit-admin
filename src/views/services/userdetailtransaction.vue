@@ -189,7 +189,10 @@ export default {
       this.phone = getUserbyID.data.data.phone;
       this.isLoading = false;
     } catch (e) {
-      console.log(e);
+      if (e.response.status === 401) {
+        this.$router.push("/");
+        localStorage.removeItem("admin");
+      }
     }
   },
 };

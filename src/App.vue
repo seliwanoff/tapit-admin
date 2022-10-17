@@ -35,6 +35,7 @@ export default {
     },
     logoutUser: function () {
       localStorage.removeItem("user");
+      localStorage.removeItem("admin");
       localStorage.removeItem("sub");
       localStorage.removeItem("bill");
       this.$router.push("/");
