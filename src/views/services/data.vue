@@ -103,7 +103,7 @@
                     </select>
                   </label>
                   <label for="search">
-                    Years:
+                    Year:
                     <select v-model="y" @click="getYearTransact(y)">
                       <option :value="item" v-for="item in ys" :key="item.index">
                         {{ item }}
@@ -118,11 +118,20 @@
                     <span>{{ totalpage }}</span>
                   </div>
                   <div class="cvlp">
-                    <h3>{{ nm }} Total Cable Income</h3>
+                    <h3>{{ nm }} Total Data Income</h3>
                     <br />
                     <span>&#8358;{{ Intl.NumberFormat().format(totalAmount) }}</span>
                   </div>
                 </div>
+              </div>
+              <div class="info-ipx-col">
+                <label for="search" style="width: auto !important">serach:</label>
+                <input
+                  type="search"
+                  style="outline: none; padding: 5px; height: auto !important"
+                  @keyup="usernameget"
+                  v-model="typedref"
+                />
               </div>
               <div class="info-ipx-col">
                 <label for="search">
@@ -145,16 +154,17 @@
                 >
                   <thead>
                     <tr role="row">
-                      <th>Transaction ID</th>
+                      <th style="width:100px">Transaction ID</th>
                       <th>Time</th>
-                      <th>User</th>
+                      <th>Receiver</th>
                       <th>Network</th>
                       <th>Plan</th>
+
                       <th>Bal Before</th>
                       <th>Bal After</th>
                       <th>Amount</th>
-                      <th>Source</th>
                       <th>Status</th>
+                      <!--<th>Action</th>-->
                     </tr>
                   </thead>
                   <tbody>
@@ -163,22 +173,53 @@
                       :key="item.id"
                       @click="getTransactionDetailUsers(item.user, item.ref)"
                     >
-                      <td>{{ item.ref }}</td>
+                      <td style="width:100px">{{ item.ref }}</td>
                       <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
                       <td>{{ item.reciever }}</td>
-                      <td v-if="item.name == 1">MTN</td>
 
-                      <td v-else-if="item.name == 2">Airtel</td>
-                      <td v-else-if="item.name == 3">9mobile</td>
-                      <td v-else-if="item.name == 4">GLO</td>
-                      <td v-else>{{ item.name }}</td>
+                      <td v-if="item.name == 1 && item.name != 'succesfull'">MTN</td>
+                      <td v-else-if="item.name == 2 && item.name != 'succesfull'">
+                        Airtel
+                      </td>
+                      <td v-else-if="item.name == 3 && item.name != 'succesfull'">
+                        9mobile
+                      </td>
+                      <td v-else-if="item.name == 4 && item.name != 'succesfull'">GLO</td>
+                      <td
+                        v-else-if="
+                          item.name != 1 &&
+                          item.name != 2 &&
+                          item.name != 3 &&
+                          item.name != 4 &&
+                          item.name != 'succesfull'
+                        "
+                      >
+                        {{ item.name }}
+                      </td>
+
+                      <td v-if="item.network == 1 && item.name == 'succesfull'">MTN</td>
+                      <td v-else-if="item.network == 2 && item.name == 'succesfull'">
+                        Airtel
+                      </td>
+                      <td v-else-if="item.network == 3 && item.name == 'succesfull'">
+                        9mobile
+                      </td>
+                      <td v-else-if="item.network == 4 && item.name == 'succesfull'">
+                        GLO
+                      </td>
                       <td>{{ item.plan }}</td>
                       <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
                       <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
                       <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
-                      <td>{{ item.m }}</td>
                       <td v-if="item.status == 1">Completed</td>
                       <td v-if="item.status == 0">Failed</td>
+                      <!---
+                      <td>
+                        <button @click="getEachUserDetails" class="btn-details">
+                          Details
+                        </button>
+                      </td>
+                      -->
                     </tr>
                   </tbody>
                   <tfoot>
@@ -207,31 +248,30 @@
             </main>
           </Tab>
           <Tab :isSelected="selected === 'Schedule'">
-            <main>
+            <main id="content">
               <div class="icl-tbl">
                 <table class="table-body" v-if="airtimeSchedule != 0">
                   <thead>
                     <tr role="row">
-                      <th>Transaction ID</th>
+                      <th style="width: 80px">Transaction ID</th>
                       <th>Time</th>
-                      <th>Receiver</th>
+                      <th>User</th>
                       <th>Network</th>
-                      <th>Plan</th>
-                      <th>Bal Before</th>
-                      <th>Bal After</th>
+
                       <th>Amount</th>
+                      <th>Source</th>
                       <th>Status</th>
+                      <!-- <th>Action</th>-->
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="item in airtimeSchedule" :key="item.id">
-                      <td>{{ item.ref }}</td>
+                      <td style="width: 80px !important">{{ item.ref }}</td>
                       <td>{{ moment(item.updated_at).format("d-m-yyyy") }}</td>
                       <td>{{ item.reciever }}</td>
                       <td>{{ item.name }}</td>
-                      <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
-                      <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
                       <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
+                      <td>{{ item.m }}</td>
                       <td v-if="item.status == 1">Completed</td>
                       <td v-if="item.status == 0">Failed</td>
                       <!--<td>
@@ -244,24 +284,25 @@
                     </tr>
                   </tbody>
                   <tfoot>
-                    <tr
-                      v-for="item in airtimeSchedule"
-                      :key="item.id"
-                      @click="getTransactionDetailUsers(item.user, item.ref)"
-                    >
-                      <td>{{ item.ref }}</td>
-                      <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
-                      <td>{{ item.reciever }}</td>
-                      <td v-if="item.name == 1">MTN</td>
-
-                      <td v-else-if="item.name == 2">Airtel</td>
-                      <td v-else-if="item.name == 3">9mobile</td>
-                      <td v-else-if="item.name == 4">GLO</td>
-                      <td v-else>{{ item.name }}</td>
-                      <td>{{ item.plan }}</td>
-                      <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
-                      <td v-if="item.status == 1">Completed</td>
-                      <td v-if="item.status == 0">Failed</td>
+                    <tr>
+                      <button @click="prevs" class="pg-btn" :disabled="pageNumber <= 1">
+                        prev
+                      </button>
+                      <span v-for="(item, index) in new Array(page)" :key="index">
+                        <button
+                          :class="['pg-btn', pageNumber == index + 1 ? 'active' : '']"
+                          @click="pageNumbergets(index)"
+                        >
+                          {{ index + 1 }}
+                        </button>
+                      </span>
+                      <button
+                        @click="nexts"
+                        class="pg-btn"
+                        :disabled="pageNumber >= page"
+                      >
+                        next
+                      </button>
                     </tr>
                   </tfoot>
                 </table>
@@ -298,6 +339,7 @@ export default {
       status: null,
       message: "",
       btnText: "Continue",
+      typedref: "",
       isDisabled: false,
       showsce: false,
       amount: "",
@@ -348,6 +390,17 @@ export default {
     };
   },
   methods: {
+    async usernameget() {
+      const response = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/searchtransactions?id=${this.typedref}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+      this.airtimeTransaction = response.data.data;
+    },
     downloadexcel(type, fn, dl) {
       var elt = this.$refs.exportable_table;
       var wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
@@ -360,7 +413,7 @@ export default {
       const doc = new jsPDF("p", "pt", "a2");
       doc.html(document.querySelector("#content"), {
         callback: function (pdf) {
-          pdf.save("data.pdf");
+          pdf.save("airtime.pdf");
         },
       });
     },
@@ -381,11 +434,21 @@ export default {
             },
           }
         );
-        this.totalAmount = getUsers.data.total;
         this.airtimeTransaction = getUsers.data.data.data;
         this.totalpage = getUsers.data.data.total;
         this.per_page = getUsers.data.data.per_page;
         this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
+        var i;
+        this.totalAmount = 0;
+        for (i = 0; i < this.totalpage; i++) {
+          this.transStatus = this.airtimeTransaction[i].status;
+
+          if (this.transStatus == "0") {
+            continue;
+          }
+          this.totalAmount =
+            this.totalAmount + parseInt(this.airtimeTransaction[i].amount);
+        }
       } catch (e) {
         if (e.response.status === 401) {
           this.$router.push("/");
@@ -409,7 +472,7 @@ export default {
             },
           }
         );
-        console.log(getUsers);
+
         this.airtimeTransaction = getUsers.data.data.data;
 
         this.totalpage = getUsers.data.data.total;
@@ -440,7 +503,6 @@ export default {
               },
             }
           );
-
           this.airtimeTransaction = getUsers.data.data.data;
           this.totalpage = getUsers.data.data.total;
           this.per_page = getUsers.data.data.per_page;
@@ -467,7 +529,6 @@ export default {
           this.totalpage = getUsers.data.data.total;
           this.per_page = getUsers.data.data.per_page;
           this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
-
           this.totalAmount = getUsers.data.total;
         } catch (e) {
           if (e.response.status === 401) {
@@ -511,7 +572,11 @@ export default {
               },
             }
           );
-          this.allUsers = getUsers.data.data.data;
+          this.airtimeTransaction = getUsers.data.data.data;
+          console.log(this.airtimeTransaction);
+          this.totalpage = getUsers.data.data.total;
+          //this.per_page = getUsers.data.data.per_page;
+          //this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
           if (e.response.status === 401) {
@@ -522,15 +587,17 @@ export default {
       } else {
         try {
           const getUsers = await axios.get(
-            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&month=${this.am}&year=${this.y}&page=${this.pageNumber}`,
+            `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&month=${this.am}&year=${this.y}page=${this.pageNumber}`,
             {
               headers: {
                 Authorization: "Bearer " + this.token,
               },
             }
           );
-          this.allUsers = getUsers.data.data.data;
-
+          this.airtimeTransaction = getUsers.data.data.data;
+          this.totalpage = getUsers.data.data.total;
+          //this.per_page = getUsers.data.data.per_page;
+          //this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
           this.totalAmount = getUsers.data.total;
         } catch (e) {
           if (e.response.status === 401) {
@@ -553,6 +620,7 @@ export default {
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
+
       try {
         const getUsers = await axios.get(
           `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
@@ -563,7 +631,8 @@ export default {
           }
         );
 
-        this.allUsers = getUsers.data.data.data;
+        this.airtimeTransaction = getUsers.data.data.data;
+        this.totalAmount = getUsers.data.total;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         if (e.response.status === 401) {
@@ -585,6 +654,7 @@ export default {
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
+
       try {
         const getUsers = await axios.get(
           `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&page=${this.pageNumber}&month=${this.am}&year=${this.y}`,
@@ -594,7 +664,8 @@ export default {
             },
           }
         );
-        this.allUsers = getUsers.data.data.data;
+        this.airtimeTransaction = getUsers.data.data.data;
+        this.totalAmount = getUsers.data.total;
         this.totalAmount = getUsers.data.total;
       } catch (e) {
         if (e.response.status === 401) {
@@ -624,7 +695,6 @@ export default {
         );
 
         this.airtimeTransaction = getUsers.data.data.data;
-        this.totalAmount = getUsers.data.total;
       } catch (e) {
         if (e.response.status === 401) {
           this.$router.push("/");
@@ -725,13 +795,13 @@ export default {
     this.token = data.token;
     //if(data.data.type!=3){
     //this.$router.push('/admin/login')
-
     //}
     if (this.m.toString().length == 2) {
       this.am = this.m;
     } else {
       this.am = "0" + parseInt(this.m + 1);
     }
+
     try {
       const getUsers = await axios.get(
         `${process.env.VUE_APP_BASE_URL}api/gettransactions?type=2&month=${this.am}&year=${this.y}`,
@@ -741,12 +811,10 @@ export default {
           },
         }
       );
-
       this.airtimeTransaction = getUsers.data.data.data;
       this.totalpage = getUsers.data.data.total;
       this.per_page = getUsers.data.data.per_page;
       this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
-
       this.totalAmount = getUsers.data.total;
     } catch (e) {
       if (e.response.status === 401) {

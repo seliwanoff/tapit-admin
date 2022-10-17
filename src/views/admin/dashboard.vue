@@ -646,6 +646,15 @@
             <canvas id="myChart" width="50" height="50"></canvas>
           </div>
           <div class="info-ipx-col">
+            <label for="search">serach:</label>
+            <input
+              type="search"
+              style="outline: none; padding: 4px"
+              @keyup="usernameget"
+              v-model="typedusername"
+            />
+          </div>
+          <div class="info-ipx-col">
             <label for="search">
               <button
                 @click="downloadexcel('xls')"
@@ -802,9 +811,30 @@ export default {
       bill: "",
       data: "",
       cable: "",
+      typedusername: "",
     };
   },
   methods: {
+    async usernameget() {
+      try {
+        const data = JSON.parse(localStorage.getItem("admin"));
+        this.token = data.token;
+        const response = await axios.get(
+          `${process.env.VUE_APP_BASE_URL}api/searchusers?id=${this.typedusername}`,
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        );
+        this.allUsers = response.data.data;
+      } catch (e) {
+        if (e.response.status === 401) {
+          this.$router.push("/");
+          localStorage.removeItem("admin");
+        }
+      }
+    },
     downloadexcel(type, fn, dl) {
       var elt = this.$refs.exportable_table;
       var wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });

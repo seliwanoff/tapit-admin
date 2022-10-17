@@ -97,7 +97,7 @@
                 </select>
               </label>
               <label for="search">
-                Years:
+                Year:
                 <select v-model="y" @click="getYearTransact(y)">
                   <option :value="item" v-for="item in ys" :key="item.index">
                     {{ item }}
@@ -117,6 +117,15 @@
                 <span>&#8358;{{ Intl.NumberFormat().format(totalAmount) }}</span>
               </div>
             </div>
+          </div>
+          <div class="info-ipx-col">
+            <label for="search" style="width: auto !important">serach:</label>
+            <input
+              type="search"
+              style="outline: none; padding: 5px; height: auto !important"
+              @keyup="usernameget"
+              v-model="typedref"
+            />
           </div>
           <div class="info-ipx-col">
             <label for="search">
@@ -139,7 +148,7 @@
             >
               <thead>
                 <tr role="row">
-                  <th>Transaction ID</th>
+                  <th style="width: 100px">Transaction ID</th>
                   <th>Time</th>
                   <th>Receiver</th>
                   <th>Service</th>
@@ -156,7 +165,7 @@
                   :key="item.id"
                   @click="getTransactionDetailUsers(item.user, item.ref)"
                 >
-                  <td>{{ item.ref }}</td>
+                  <td style="width: 100px">{{ item.ref }}</td>
                   <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
                   <td>{{ item.reciever }}</td>
                   <td>{{ item.network }}</td>
@@ -234,6 +243,7 @@ export default {
       per_page: "",
       total: "",
       page: "",
+      typedref: "",
       totalpage: 0,
       moment: moment,
       allUsers: "",
@@ -264,6 +274,17 @@ export default {
     };
   },
   methods: {
+    async usernameget() {
+      const response = await axios.get(
+        `${process.env.VUE_APP_BASE_URL}api/searchtransactions?id=${this.typedref}`,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        }
+      );
+      this.allUsers = response.data.data;
+    },
     downloadexcel(type, fn, dl) {
       var elt = this.$refs.exportable_table;
       var wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
@@ -686,7 +707,7 @@ main {
   margin: 10px;
 
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 label {
   display: inline-block;
