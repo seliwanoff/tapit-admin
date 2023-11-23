@@ -56,14 +56,14 @@
             <div class="user-title">Status</div>
             <span v-if="status == 1 && p_status == 'true'">verified</span>
             <span v-else-if="status == 0 && p_status == 'true'">Suspended</span>
-            <span v-else>Unverified</span>
+            <span v-else-if="status == 5">Deleted Account</span>
           </div>
 
           <div class="ech-detail">
-            <button class="block" v-if="status == 1" @click="restoreUser(0, id)">
+            <button class="block" v-if="status == '1'" @click="restoreUser(0, id)">
               {{ blockText }} <span class="fa fa-times"></span>
             </button>
-            <button class="upgrade" v-if="status == 2" @click="restoreUser(1, id)">
+            <button class="upgrade" v-if="status == '2'" @click="restoreUser(1, id)">
               {{ restoreTet }}
             </button>
           </div>
@@ -618,29 +618,31 @@
       <div :class="hidemethis ? 'gc-x' : 'wideBody'">
         <div class="cards-info">
           <div class="cards">
-            <img src="https://img.icons8.com/ios-filled/35/FFFFFF/user.png" />
-            <h2>Total User</h2>
-            <span>{{ totalpage }}</span>
+            <img src="https://img.icons8.com/ios-filled/25/FFFFFF/user.png" />
+            <h2 style="font-size: 12px">Total User</h2>
+            <span style="font-size: 12px">{{ totalpage }}</span>
           </div>
           <div class="cards">
-            <img src="https://img.icons8.com/ios-filled/35/FFFFFF/briefcase.png" />
-            <h2>Total wallet</h2>
-            <span>&#8358;{{ Intl.NumberFormat().format(totalwallet) }}</span>
+            <img src="https://img.icons8.com/ios-filled/25/FFFFFF/briefcase.png" />
+            <h2 style="font-size: 12px">Total wallet</h2>
+            <span style="font-size: 12px"
+              >&#8358;{{ Intl.NumberFormat().format(totalwallet) }}</span
+            >
           </div>
           <div class="cards">
-            <img src="https://img.icons8.com/ios-filled/35/FFFFFF/briefcase.png" />
-            <h2>{{ nm.slice(0, 4) }} Transacton</h2>
-            <span>{{ getTotal }}</span>
+            <img src="https://img.icons8.com/ios-filled/25/FFFFFF/briefcase.png" />
+            <h2 style="font-size: 12px">{{ nm.slice(0, 3) }} Transacton</h2>
+            <span style="font-size: 12px">{{ getTotal }}</span>
           </div>
           <div class="cards">
-            <img src="https://img.icons8.com/dotty/35/FFFFFF/get-revenue--v3.png" />
-            <h2 style="overflow: hidden">{{ nm.slice(0, 4) }} Income</h2>
-            <span style="overflow: hidden"
+            <img src="https://img.icons8.com/dotty/25/FFFFFF/get-revenue--v3.png" />
+            <h2 style="overflow: hidden; font-size: 12px">{{ nm.slice(0, 3) }} Income</h2>
+            <span style="overflow: hidden; font-size: 12px"
               >&#8358;{{ Intl.NumberFormat().format(totalAmount) }}</span
             >
           </div>
         </div>
-        <h2 class="hc-x">User Information</h2>
+        <h2 class="hc-x" style="font-size: 12px">User Information</h2>
         <main>
           <div style="max-width: 300px; width: 100%; margin: 0px auto">
             <canvas id="myChart" width="50" height="50"></canvas>
@@ -668,64 +670,57 @@
           </div>
 
           <div class="icl-tbl">
-            <table
-              class="table-body"
-              v-if="allUsers != 0"
-              id="content"
-              ref="exportable_table"
-            >
-              <thead>
-                <tr role="row">
-                  <th>Username</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
+            <div class="table-body" v-if="allUsers != 0">
+              <table id="content" ref="exportable_table" style="width: 100%">
+                <thead>
+                  <tr role="row">
+                    <th style="max-width: 30px">Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
 
-                  <th>Phone Number</th>
-                  <th>Balance</th>
-                  <th>Source</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in allUsers" :key="item.id">
-                  <td style="max-width: 120px">{{ item.username }}</td>
-                  <td>{{ item.fname }}</td>
-                  <td>{{ item.lname }}</td>
+                    <th>Phone Number</th>
+                    <th>Balance</th>
+                    <th>commission</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in allUsers" :key="item.id">
+                    <td style="max-width: 30px">{{ item.username }}</td>
+                    <td>{{ item.fname }}</td>
+                    <td>{{ item.lname }}</td>
 
-                  <td>{{ item.phone }}</td>
-                  <td>&#8358;{{ Intl.NumberFormat().format(item.balance) }}</td>
-                  <td>{{ item.m }}</td>
-                  <td v-if="item.type == 1">Normal</td>
-                  <td v-if="item.type == 2">Merchant</td>
-                  <td>
-                    <button
-                      @click="getUsersByUsername(item.username)"
-                      class="btn-details"
-                    >
-                      Details
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
+                    <td>{{ item.phone }}</td>
+                    <td>&#8358;{{ Intl.NumberFormat().format(item.balance) }}</td>
+                    <td>&#8358;{{ Intl.NumberFormat().format(item.commission) }}</td>
 
-              <tfoot>
-                <button @click="prev" class="pg-btn" :disabled="pageNumber <= 1">
-                  prev
-                </button>
-                <span v-for="(item, index) in new Array(page)" :key="index">
-                  <button
-                    :class="['pg-btn', pageNumber == index + 1 ? 'active' : '']"
-                    @click="pageNumberget(index)"
-                  >
-                    {{ index + 1 }}
-                  </button>
-                </span>
-                <button @click="next" class="pg-btn" :disabled="pageNumber >= page">
-                  next
-                </button>
-              </tfoot>
-            </table>
+                    <td>{{ item.m }}</td>
+                    <td v-if="item.type == 1">Normal</td>
+                    <td v-if="item.type == 2">Merchant</td>
+                    <td>
+                      <button
+                        @click="getUsersByUsername(item.username)"
+                        class="btn-details"
+                        style="font-size: 12px"
+                      >
+                        Details
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="max-width: 950px; display: flex; justify-content: center">
+                <v-pagination
+                  v-model="per_page"
+                  :pages="page"
+                  :range-size="1"
+                  active-color="#DCEDFF"
+                  @update:modelValue="pageNumberget"
+                />
+              </div>
+            </div>
             <div v-else style="width: 100%; text-align: center; font-weight: bold">
               No User found
             </div>
@@ -744,10 +739,12 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Chart from "chart.js/auto";
 import * as XLSX from "xlsx/xlsx.mjs";
+import VPagination from "@hennge/vue3-pagination";
+import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
 export default {
   name: "Bill -app",
-  components: { Loading },
+  components: { Loading, VPagination },
   data() {
     return {
       id: "",
@@ -888,11 +885,11 @@ export default {
       this.showsce = !this.showsce;
     },
     async pageNumberget(newPagenumber) {
-      this.pageNumber = newPagenumber + 1;
+      this.pageNumber = newPagenumber;
       this.$router.push({
         path: this.$route.path,
         query: {
-          pageNumber: newPagenumber + 1,
+          pageNumber: newPagenumber,
         },
       });
 
@@ -913,60 +910,7 @@ export default {
         }
       }
     },
-    async prev() {
-      this.$router.push({
-        path: this.$route.path,
-        query: {
-          pageNumber: this.pageNumber - 1,
-        },
-      });
-      this.pageNumber = this.pageNumber - 1;
 
-      try {
-        const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/getusers?page=${this.pageNumber}`,
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        );
-
-        this.allUsers = getUsers.data.data.data;
-      } catch (e) {
-        if (e.response.status === 401) {
-          this.$router.push("/");
-          localStorage.removeItem("admin");
-        }
-      }
-    },
-    async next() {
-      this.$router.push({
-        path: this.$route.path,
-        query: {
-          pageNumber: this.pageNumber + 1,
-        },
-      });
-      this.pageNumber = this.pageNumber + 1;
-
-      try {
-        const getUsers = await axios.get(
-          `${process.env.VUE_APP_BASE_URL}api/getusers?page=${this.pageNumber}`,
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        );
-
-        this.allUsers = getUsers.data.data.data;
-      } catch (e) {
-        if (e.response.status === 401) {
-          this.$router.push("/");
-          localStorage.removeItem("admin");
-        }
-      }
-    },
     async getUsersByUsername(username) {
       this.isLoading = true;
       this.hidedetails = !this.hidedetails;
@@ -1099,6 +1043,9 @@ export default {
 
       this.per_page = getUsers.data.data.per_page;
       this.page = Math.ceil(parseInt(this.totalpage / this.per_page) + 1);
+      console.log(this.page);
+      console.log(this.totalpage);
+      console.log(this.per_page);
     } catch (e) {
       if (e.response.status === 401) {
         this.$router.push("/panel/login");
@@ -1378,29 +1325,31 @@ label input {
 }
 .table-body {
   padding: 10px;
-  border: 1px solid #ccc;
+
   border-spacing: 0px;
   font-weight: 500;
   width: 100%;
 }
 .table-body thead tr th {
   color: #000;
-  font-size: 1rem;
+  font-size: 12px;
   font-weight: 800;
-  border-width: 1px;
-  border: 1px solid rgb(236, 230, 230);
+
   padding: 0.35rem 0.9rem;
   word-spacing: 1px;
   border-spacing: 0px;
 }
 tbody tr td {
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 500;
-  border-width: 1px;
+
   text-align: center;
   padding: 0.35rem 0.9rem;
-  border: 1px solid rgb(236, 230, 230);
+
   max-width: 50px !important;
+}
+tr:nth-child(even) {
+  background: #ccc;
 }
 @media screen and (max-width: 499px) {
   .table-body thead tr th {

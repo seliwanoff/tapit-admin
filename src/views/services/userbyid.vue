@@ -84,42 +84,69 @@
           </div>
 
           <div class="icl-tbl">
-            <table class="table-body" v-if="allUsers != 0">
-              <thead>
-                <tr role="row">
-                  <th>Transaction ID</th>
-                  <th>Time</th>
-                  <th>Receiver</th>
-                  <th>Service</th>
-                  <th>Bal Before</th>
-                  <th>Bal After</th>
-                  <th>Amount</th>
-                  <th>Source</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in allUsers" :key="item.id">
-                  <td>{{ item.ref }}</td>
-                  <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
-                  <td>{{ item.reciever }}</td>
-                  <td v-if="item.type == 1">AIRTIME</td>
-                  <td v-else-if="item.type == 2">Data Subscription</td>
-                  <td v-else-if="item.type == 6">Fund Deposit</td>
-                  <td v-else-if="item.type == 4">Transfer</td>
-                  <td v-else-if="item.type == 10">Merchant Upgrade</td>
-                  <td v-else-if="item.type == 3">Cable</td>
-                  <td v-else-if="item.type == 5">Bill</td>
-                  <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
-                  <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
-                  <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
-                  <td>{{ item.m }}</td>
-                  <td v-if="item.status == 1">Completed</td>
-                  <td v-if="item.status == 0">Failed</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
+            <div v-if="allUsers != 0">
+              <table class="table-body" style="width: 100%">
+                <thead>
+                  <tr role="row">
+                    <th style="max-width: 120px">Transaction ID</th>
+                    <th>Time</th>
+                    <th>Receiver</th>
+                    <th>Service</th>
+
+                    <th>Bal Before</th>
+                    <th>Bal After</th>
+
+                    <th>Amount</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in allUsers" :key="item.id">
+                    <td style="max-width: 120px">{{ item.ref }}</td>
+                    <td>{{ moment(item.updated_at).format("DD-MM-YYYY") }}</td>
+                    <td>{{ item.reciever }}</td>
+                    <td v-if="item.type == 1">AIRTIME</td>
+                    <td v-else-if="item.type == 2">Data Subscription</td>
+                    <td v-else-if="item.type == 6">Fund Deposit</td>
+                    <td v-else-if="item.type == 4">Transfer</td>
+                    <td v-else-if="item.type == 10">Merchant Upgrade</td>
+                    <td v-else-if="item.type == 3">Cable</td>
+                    <td v-else-if="item.type == 5">Bill</td>
+                    <td v-else-if="item.type == 31 || item.type == 30">Refund</td>
+
+                    <td>&#8358;{{ Intl.NumberFormat().format(item.bbefore) }}</td>
+                    <td>&#8358;{{ Intl.NumberFormat().format(item.bafter) }}</td>
+
+                    <td>&#8358;{{ Intl.NumberFormat().format(item.amount) }}</td>
+                    <td>{{ item.m }}</td>
+                    <td v-if="item.status == 1">Completed</td>
+                    <td v-if="item.status == 0">Failed</td>
+                    <td v-if="item.status == 5">Refunded</td>
+
+                    <td>
+                      <button
+                        v-show="item.status != 5"
+                        @click="RefundTransaction(item.id, item.type)"
+                        style="
+                          border: none;
+                          outline: none;
+                          padding: 8px;
+                          background: lightgreen;
+                          border-radius: 8px;
+                          color: #fff;
+                          text-align: center;
+                        "
+                      >
+                        Refund
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div>
+                <div>
                   <button @click="prev" class="pg-btn" :disabled="pageNumber <= 1">
                     prev
                   </button>
@@ -134,9 +161,10 @@
                   <button @click="next" class="pg-btn" :disabled="pageNumber >= page">
                     next
                   </button>
-                </tr>
-              </tfoot>
-            </table>
+                </div>
+              </div>
+            </div>
+
             <div v-else style="width: 100%; text-align: center; font-weight: bold">
               No Transaction found
             </div>
@@ -175,6 +203,7 @@ export default {
       isLoading: true,
       fullPage: true,
       color: "#0A1AA8",
+      refundmessage: "Refund",
       wideBody: false,
       pageNumber: 1,
       per_page: "",
@@ -211,11 +240,32 @@ export default {
     };
   },
   methods: {
+    async RefundTransaction(value) {
+      alert("Processing, please wait...");
+
+      const data = {
+        id: value,
+      };
+      await axios
+        .post(`${process.env.VUE_APP_BASE_URL}api/refunddata`, data, {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
+        .then(() => {
+          //  console.log(res);
+          alert("Successful.");
+        })
+        .catch((e) => {
+          console.log(e);
+          alert(e.response.data.message);
+        });
+    },
     async getMonthNumber(m) {
       this.nm = this.months[m];
 
       if (this.m.toString().length == 2) {
-        this.am = m;
+        this.am = parseInt(m + 1);
       } else {
         this.am = "0" + parseInt(m + 1);
       }
@@ -242,7 +292,7 @@ export default {
     },
     async getDaysValue(day) {
       if (this.m.toString().length == 2) {
-        this.am = this.m;
+        this.am = parseInt(this.m + 1);
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
@@ -272,7 +322,7 @@ export default {
     },
     async getYearTransact(year) {
       if (this.m.toString().length == 2) {
-        this.am = this.m;
+        this.am = parseInt(this.m + 1);
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
@@ -330,7 +380,7 @@ export default {
     },
     async pageNumberget(newPagenumber) {
       if (this.m.toString().length == 2) {
-        this.am = this.m;
+        this.am = parseInt(this.m + 1);
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
@@ -397,7 +447,7 @@ export default {
       });
       this.pageNumber = this.pageNumber - 1;
       if (this.m.toString().length == 2) {
-        this.am = this.m;
+        this.am = parseInt(this.m + 1);
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
@@ -429,7 +479,7 @@ export default {
       });
       this.pageNumber = this.pageNumber + 1;
       if (this.m.toString().length == 2) {
-        this.am = this.m;
+        this.am = parseInt(this.m + 1);
       } else {
         this.am = "0" + parseInt(this.m + 1);
       }
@@ -490,7 +540,7 @@ export default {
     //this.$router.push('/admin/login')
     //}
     if (this.m.toString().length == 2) {
-      this.am = this.m;
+      this.am = parseInt(this.m + 1);
     } else {
       this.am = "0" + parseInt(this.m + 1);
     }
@@ -656,6 +706,7 @@ tbody tr td {
   text-align: center;
   padding: 0.35rem 0.9rem;
   border: 1px solid rgb(236, 230, 230);
+  max-width: 90px !important;
 }
 @media screen and (max-width: 499px) {
   .table-body thead tr th {

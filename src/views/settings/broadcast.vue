@@ -4,7 +4,7 @@
 
     <div class="rg-c">
       <div class="gc-x">
-        <h2 class="hc-x">Broadcast</h2>
+        <h2 class="hc-x" style="font-size: 12px">Broadcast</h2>
         <main>
           <Message :status="status" :message="message" />
 
@@ -25,8 +25,17 @@
                 required
               ></textarea>
             </div>
+            <!--
             <div class="ml-xf">
-              <button :disabled="isDisabled" style="margin-top: 10px !important">
+              <label for="email">Title</label> <br />
+              <input type="number" placeholder="Send Number" v-model="of" required />
+            </div>
+            -->
+            <div class="ml-xf">
+              <button
+                :disabled="isDisabled"
+                style="margin-top: 10px !important; font-size: 12px"
+              >
                 {{ btnText }}
               </button>
             </div>
@@ -51,6 +60,7 @@ export default {
       message: "",
       btnText: "Send Broadcast",
       isDisabled: false,
+      of: 0,
     };
   },
   methods: {
@@ -70,25 +80,17 @@ export default {
       };
 
       try {
-        const response = await axios.post(
+        await axios.post(
           `${process.env.VUE_APP_BASE_URL}api/sendfirebase`,
           data,
           {
             headers: headers,
           }
         );
-        console.log(response);
-        if (response.data.success) {
-          this.status = true;
-          this.message = "Broadcast Sent sucessfully";
-          this.$router.go();
-        } else {
-          this.status = false;
-          this.message = "Broadcast Cant be sent";
-          this.interval = setTimeout(() => {
-            this.status = null;
-          }, 3000);
-        }
+
+        this.status = true;
+        this.message = "Broadcast Sent sucessfully";
+        this.$router.go();
       } catch (e) {
         if (e.response.status == 400 || e.response.status == 422) {
           this.isDisabled = false;
@@ -121,7 +123,7 @@ export default {
 }
 .rg-c .gc-x {
   margin: 50px;
-  max-width: 500px;
+  max-width: 350px;
   width: 100%;
   margin: 100px auto;
   background: #fff;
@@ -168,7 +170,7 @@ label {
 input {
   outline: none;
   box-sizing: border-box;
-  height: 50px;
+
   border-radius: 10px;
   border: 1px solid #ccc;
   width: 96%;

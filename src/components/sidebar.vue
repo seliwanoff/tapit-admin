@@ -629,13 +629,20 @@ li:hover {
   color: #fff;
 
   border-radius: 100%;
-  padding: 6px;
+  padding: 3px;
+  height: 13px;
+  width: 13px;
+  display: inline-block;
+  font-size: 10px !important;
   align-content: center;
   margin-right: 10px;
   text-align: center;
 }
 .chl-ck span {
   color: #fff !important;
+}
+.icon-menu {
+  font-size: 10px !important ;
 }
 @media screen and (max-width: 996px) {
   aside {

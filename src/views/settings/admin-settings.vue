@@ -269,6 +269,29 @@
                     <select name="" id="" v-model="mtnapi">
                       <option :value="2">SME PLUG</option>
                       <option :value="1">CARDRI</option>
+                      <option :value="3">CLUBKONNECT</option>
+                      <option :value="4">SIMHOST SME</option>
+                      <option :value="5">OFF SIMHOST SME</option>
+                    </select>
+                  </div>
+                  <div class="ml-xf tcg-lf">
+                    <label for="email"> Airtel Data API</label> <br />
+                    <select name="" id="" v-model="airtelapi">
+                      <option :value="1">SME PLUG</option>
+                      <option :value="2">CARDRI</option>
+                      <option :value="3">CLUBKONNECT</option>
+                      <option :value="5">OFF SIMHOST SME</option>
+
+                    </select>
+                  </div>
+                  <div class="ml-xf tcg-lf">
+                    <label for="email"> Glo Data API</label> <br />
+                    <select name="" id="" v-model="gloapi">
+                      <option :value="1">SME PLUG</option>
+                      <option :value="2">CARDRI</option>
+                      <option :value="3">CLUBKONNECT</option>
+                      <option :value="5">OFF SIMHOST SME</option>
+
                     </select>
                   </div>
 
@@ -383,6 +406,8 @@ export default {
       ncaitime: "",
       ncdata: "",
       ncbill: "",
+      gloapi: "",
+      airtelapi: "",
     };
   },
 
@@ -414,6 +439,8 @@ export default {
       this.ncaitime = response.data.data.ncaitime;
       this.ncdata = response.data.data.ncdata;
       this.ncbill = response.data.data.ncbill;
+      this.gloapi = response.data.data.gloapi;
+      this.airtelapi = response.data.data.airtelapi;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
@@ -509,6 +536,8 @@ export default {
         ncaitime: this.ncaitime,
         ncdata: this.ncdata,
         ncbill: this.ncbill,
+        airtelapi: this.airtelapi,
+        gloapi: this.gloapi,
       };
       try {
         const headers = {

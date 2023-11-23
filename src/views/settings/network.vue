@@ -21,6 +21,7 @@
                 <select v-model="mtn" class="inp-value">
                   <option value="vtu">HOSTED SIM</option>
                   <option value="airtime">SME PLUG</option>
+                  <option value="5">OFF</option>
                 </select>
               </div>
               <div class="ml-xf tcg-lf">
@@ -28,6 +29,7 @@
                 <select v-model="airtel" class="inp-value">
                   <option value="vtu">HOSTED SIM</option>
                   <option value="airtime">SME PLUG</option>
+                  <option value="5">OFF</option>
                 </select>
               </div>
 
@@ -36,6 +38,7 @@
                 <select v-model="mobile" class="inp-value">
                   <option value="vtu">HOSTED SIM</option>
                   <option value="airtime">SME PLUG</option>
+                  <option value="5">OFF</option>
                 </select>
               </div>
               <div class="ml-xf tcg-lf">
@@ -43,6 +46,7 @@
                 <select v-model="glo" class="inp-value">
                   <option value="vtu">HOSTED SIM</option>
                   <option value="airtime">SME PLUG</option>
+                  <option value="5">OFF</option>
                 </select>
               </div>
               <div class="ml-xf tcg-lf">
@@ -126,6 +130,8 @@ export default {
       ncbill: 0,
       ncdata: 0,
       ncaitime: 0,
+      gloapi: "",
+      airtelapi: "",
     };
   },
 
@@ -158,6 +164,8 @@ export default {
       this.ncdata = response.data.data.ncdata;
       this.naitime = response.data.data.naitime;
       this.ncbill = response.data.data.ncbill;
+      this.gloapi = response.data.data.gloapi;
+      this.airtelapi = response.data.data.airtelapi;
 
       this.cbill = response.data.data.cbill;
     } catch (e) {
@@ -254,6 +262,8 @@ export default {
         ncdata: this.ncdata,
         ncaitime: this.ncaitime,
         ncbill: this.ncbill,
+        airtelapi: this.airtelapi,
+        gloapi: this.gloapi,
       };
       try {
         const headers = {

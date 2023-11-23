@@ -40,11 +40,14 @@
           </div>
           <hr />
           <div class="ml-xf">
-            <span class="mtyl-hdck">Reference</span> <span class="tiepl">{{ ref }}</span>
+            <span class="mtyl-hdck">Reference</span>
+            <span class="tiepl">{{ ref }}</span>
           </div>
           <div class="ml-xf">
             <span class="mtyl-hdck">Amount</span>
-            <span class="tiepl">&#8358;{{ Intl.NumberFormat().format(amount) }}</span>
+            <span class="tiepl"
+              >&#8358;{{ Intl.NumberFormat().format(amount) }}</span
+            >
           </div>
           <div class="ml-xf" v-if="type == 4">
             <span class="mtyl-hdck">Sender</span>
@@ -54,22 +57,33 @@
             <span class="mtyl-hdck">Receiver</span>
             <span class="tiepl">{{ plan }}</span>
           </div>
+
           <div class="ml-xf">
             <span class="mtyl-hdck">Balance Before</span>
-            <span class="tiepl">&#8358;{{ Intl.NumberFormat().format(before) }}</span>
+            <span class="tiepl"
+              >&#8358;{{ Intl.NumberFormat().format(before) }}</span
+            >
           </div>
           <div class="ml-xf">
             <span class="mtyl-hdck">Balance After</span>
-            <span class="tiepl">&#8358;{{ Intl.NumberFormat().format(after) }}</span>
+            <span class="tiepl"
+              >&#8358;{{ Intl.NumberFormat().format(after) }}</span
+            >
           </div>
+
           <div class="ml-xf" v-if="type == 4">
             <span class="mtyl-hdck">Recipient Balance Before</span>
-            <span class="tiepl">&#8358;{{ Intl.NumberFormat().format(rbefore) }}</span>
+            <span class="tiepl"
+              >&#8358;{{ Intl.NumberFormat().format(rbefore) }}</span
+            >
           </div>
           <div class="ml-xf" v-if="type == 4">
             <span class="mtyl-hdck">Recipient Balance After</span>
-            <span class="tiepl">&#8358;{{ Intl.NumberFormat().format(rafter) }}</span>
+            <span class="tiepl"
+              >&#8358;{{ Intl.NumberFormat().format(rafter) }}</span
+            >
           </div>
+
           <div class="ml-xf">
             <span class="mtyl-hdck">Service</span>
             <span class="tiepl" v-if="type == 1">Airtime</span>
@@ -81,29 +95,38 @@
             <span class="tiepl" v-else-if="type == 4">Transfer </span>
           </div>
           <div class="ml-xf" v-if="plan != '' && paln != null">
-            <span class="mtyl-hdck">Plan</span> <span class="tiepl">{{ plan }}</span>
+            <span class="mtyl-hdck">Plan</span>
+            <span class="tiepl">{{ plan }}</span>
           </div>
           <div class="ml-xf" v-if="type == 1 || plan == 2">
             <span class="mtyl-hdck">Network</span>
             <span class="tiepl" v-if="type == 1 && network == 1">MTN</span>
-            <span class="tiepl" v-else-if="type == 1 && network == 2">Airtel</span>
-            <span class="tiepl" v-else-if="type == 1 && network == 3">9Mobile</span>
+            <span class="tiepl" v-else-if="type == 1 && network == 2"
+              >Airtel</span
+            >
+            <span class="tiepl" v-else-if="type == 1 && network == 3"
+              >9Mobile</span
+            >
             <span class="tiepl" v-else-if="type == 1 && network == 4">GLO</span>
             <span class="tiepl" v-else>{{ network }}</span>
           </div>
           <div class="ml-xf">
-            <span class="mtyl-hdck">User</span> <span class="tiepl">{{ fullname }}</span>
+            <span class="mtyl-hdck">User</span>
+            <span class="tiepl">{{ fullname }}</span>
           </div>
           <div class="ml-xf">
             <span class="mtyl-hdck">Username</span>
             <span class="tiepl">{{ username }}</span>
           </div>
           <div class="ml-xf">
-            <span class="mtyl-hdck">Email</span> <span class="tiepl">{{ email }}</span>
+            <span class="mtyl-hdck">Email</span>
+            <span class="tiepl">{{ email }}</span>
           </div>
           <div class="ml-xf">
             <span class="mtyl-hdck">Date/Time</span>
-            <span class="tiepl">{{ moment(date).format("DD-MM-YYYY hh:mm:ss") }}</span>
+            <span class="tiepl">{{
+              moment(date).format("DD-MM-YYYY hh:mm:ss")
+            }}</span>
           </div>
         </main>
       </div>
@@ -183,7 +206,8 @@ export default {
       this.plan = getTransaction.data.data.plan;
       this.name = getTransaction.data.data.name;
       this.date = getTransaction.data.data.updated_at;
-      this.fullname = getUserbyID.data.data.fname + " " + getUserbyID.data.data.lname;
+      this.fullname =
+        getUserbyID.data.data.fname + " " + getUserbyID.data.data.lname;
       this.username = getUserbyID.data.data.username;
       this.email = getUserbyID.data.data.email;
       this.phone = getUserbyID.data.data.phone;
