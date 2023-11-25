@@ -281,7 +281,6 @@
                       <option :value="2">CARDRI</option>
                       <option :value="3">CLUBKONNECT</option>
                       <option :value="5">OFF SIMHOST SME</option>
-
                     </select>
                   </div>
                   <div class="ml-xf tcg-lf">
@@ -291,7 +290,6 @@
                       <option :value="2">CARDRI</option>
                       <option :value="3">CLUBKONNECT</option>
                       <option :value="5">OFF SIMHOST SME</option>
-
                     </select>
                   </div>
 

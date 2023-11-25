@@ -222,7 +222,7 @@
                               color: #fff;
                               padding: 4px 8px;
                             "
-                            @click="refundAll"
+                            @click="refundAll(item)"
                           >
                             Refund
                           </button>
@@ -407,11 +407,18 @@ export default {
         ? XLSX.write(wb, { bookType: type, bookSST: true, type: "base64" })
         : XLSX.writeFile(wb, fn || "SheetJSTableExport." + (type || "xlsx"));
     },
-    async refundAll() {
+    async refundAll(item) {
       alert("Processing...");
+      const data = {
+        tid: item.id,
+      };
 
       await axios
-        .post(`${process.env.VUE_APP_BASE_URL}api/refundall`)
+        .post(`${process.env.VUE_APP_BASE_URL}api/refundall`, data,  {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then(() => {
           alert("Succesful");
         })
